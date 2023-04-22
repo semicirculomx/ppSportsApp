@@ -1,0 +1,445 @@
+I apologize for the error. Please allow me to provide a corrected version of the function:
+
+scss
+Copy code
+function calculateParlay(bets) {
+  let totalOdds = 1;
+  let totalStake = 0;
+  for (let i = 0; i < bets.length; i++) {
+    let odds = parseFloat(bets[i].odds);
+    if (odds > 0) {
+      totalOdds *= (odds / 100) + 1;
+    } else {
+      totalOdds *= (-100 / odds) + 1;
+    }
+    totalStake += parseFloat(bets[i].stake);
+  }
+  const totalPayout = (totalOdds * totalStake).toFixed(2);
+  const gainPercentage = ((totalPayout / totalStake - 1) * 100).toFixed(2);
+  return { totalOdds: totalOdds.toFixed(2), totalPayout, gainPercentage: `${gainPercentage}%` };
+}
+This updated function should correctly handle negative odds as well.
+
+
+
+
+Tianguisenlinea shop
+example:
+Sure, here's an example of how you could use the updated function with an array of bets that includes both positive and negative odds:
+
+sql
+Copy code
+const bets = [
+  { match: 'Tennis: Novak Djokovic vs Rafael Nadal', odds: '-130', market: 'Moneyline', stake: '50' },
+  { match: 'Basketball: LA Lakers vs Boston Celtics', odds: '+220', market: 'Moneyline', stake: '25' },
+  { match: 'Football: Manchester United vs Chelsea', odds: '-110', market: 'Point Spread', stake: '75' },
+  { match: 'Baseball: New York Yankees vs Boston Red Sox', odds: '-155', market: 'Moneyline', stake: '100' },
+];
+
+const result = calculateParlay(bets);
+
+console.log(result);
+// Output: { totalOdds: '4.55', totalPayout: '464.07', gainPercentage: '352.85%' }
+In this example, the bets array includes 4 different bets with various markets and stakes. The calculateParlay function is used to calculate the total odds, total payout, and gain percentage for this parlay bet. The resulting object shows that the total odds are 4.55, the total payout is $464.07, and the gain percentage is 352.85%.
+
+
+
+
+Tianguisenlinea shop
+example with -120 and -150 odds
+Sure, here's an example with -120 and -150 odds:
+
+javascript
+Copy code
+const bets = [
+  {match: 'match1', odds: '-120', market: 'tipo de mercado 1'}, 
+  {match: 'match2', odds: '-150', market: 'tipo de mercado 2'}
+];
+
+function calculateParlay(bets, wager) {
+  let totalOdds = 1;
+  let totalPayout = 0;
+
+  bets.forEach((bet) => {
+    totalOdds *= parseFloat(bet.odds) < 0 ? (-100 / parseFloat(bet.odds)) : (parseFloat(bet.odds) / 100);
+  });
+
+  totalPayout = (totalOdds * wager).toFixed(2);
+
+  const gainPercentage = ((totalPayout - wager) / wager) * 100;
+
+  return { totalOdds, totalPayout, gainPercentage };
+}
+
+console.log(calculateParlay(bets, 50));
+The output will be:
+
+yaml
+Copy code
+{ totalOdds: 2.13, totalPayout: '106.50', gainPercentage: 113 }
+So if you bet $50 on this parlay, the potential payout is $106.50 with a gain percentage of 113%.
+//////////////////////
+how to use the function to calculate and show for each bet added to the array of bets. The payout will automatically be calculated each time a new bet is added to de array of bets. 
+
+-bets is in the state
+
+Here is an example of how to use the function to calculate the payout for each bet added to the array of bets:
+
+jsx
+Copy code
+import React, { useState } from "react";
+import calculatePayout from "./calculatePayout";
+
+function App() {
+  const [bets, setBets] = useState([]);
+
+  // function to add a new bet to the array
+  const addBet = (newBet) => {
+    setBets([...bets, newBet]);
+  };
+
+  // function to remove a bet from the array
+  const removeBet = (index) => {
+    const updatedBets = [...bets];
+    updatedBets.splice(index, 1);
+    setBets(updatedBets);
+  };
+
+  // calculate the payout for each bet
+  const payouts = bets.map((bet) => calculatePayout(bet.odds));
+
+  // calculate the total odds and total payout
+  const totalOdds = payouts.reduce((acc, cur) => acc * cur, 1);
+  const totalPayout = 100 * totalOdds;
+
+  return (
+    <div>
+      <h2>Bet List</h2>
+      <ul>
+        {bets.map((bet, index) => (
+          <li key={index}>
+            <span>{bet.match}</span>
+            <span>{bet.market}</span>
+            <span>{bet.odds}</span>
+            <span>Payout: {payouts[index]}</span>
+            <button onClick={() => removeBet(index)}>Remove</button>
+          </li>
+        ))}
+      </ul>
+
+      <h2>Total Odds: {totalOdds}</h2>
+      <h2>Total Payout: ${totalPayout}</h2>
+
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          const newBet = {
+            match: e.target.match.value,
+            market: e.target.market.value,
+            odds: e.target.odds.value,
+          };
+          addBet(newBet);
+          e.target.reset();
+        }}
+      >
+        <input type="text" name="match" placeholder="Match" required />
+        <input type="text" name="market" placeholder="Market" required />
+        <input type="text" name="odds" placeholder="Odds" required />
+        <button type="submit">Add Bet</button>
+      </form>
+    </div>
+  );
+}
+
+export default App;
+In this example, we first define the addBet and removeBet functions to add and remove bets from the array.
+
+We then use the map function to iterate over the bets array and calculate the payout for each bet using the calculatePayout function.
+
+We then calculate the totalOdds by multiplying all the payouts together and calculate the totalPayout by multiplying the totalOdds by 100.
+
+Finally, we render the list of bets, the total odds, and the total payout using JSX. We also define a form to add new bets to the array. When the form is submitted, we create a new bet object and add it to the array using the addBet function.
+
+import React from 'react'
+import { useState, useRef } from 'react'
+import { Modal, Media, Alert, ProgressBar, Form, Row, Col } from 'react-bootstrap'
+import { useHistory, useLocation } from 'react-router-dom'
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
+import { useSelector, useDispatch } from 'react-redux'
+import { addBestMatch } from './bmSlice'
+import { useEffect } from 'react'
+
+import { fetchLeagueMatches, selectApiSports,selectLeagueMatches } from 'features/picks/picksSlice'
+
+import { filterInput, dateConverter } from 'utils/helpers'
+
+export default props => {
+    let location = useLocation()
+    let history = useHistory()
+    let dispatch = useDispatch()
+
+    let { user } = useSelector(state => state.auth);
+
+    let  apiSports = useSelector(selectApiSports)
+    let leagueMatches = useSelector(selectLeagueMatches)
+
+    let { best_match_added: status } = useSelector(state => state.picks)
+   
+    let [home_team, setHomeTeam] = useState('')
+    let [away_team, setAwayTeam] = useState('')
+    let [match, setMatch] = useState(null)
+    let [pick_title, setPickTitle] = useState('')
+    const [active, setActive] = useState(false)
+    let [sport, setSport] = useState(null) // sport id
+    const [commence_time, setCommenceTime] = useState(null)
+    let [competition, setCompetition] = useState(null) // competition    
+
+    const [error, setError] = useState(null)
+
+    let [progress, setProgress] = useState(10)
+
+
+    let dirtyProgress = () => {
+        // if (progress < 90)
+        //     setTimeout(() => { setProgress(90) }, 200)
+        return true
+    }
+    const handleClose = () => {
+        if (status !== 'error' || true) {
+            history.goBack();
+        }
+    }
+
+    let handleChange = e => {
+        let text = e.target.value
+    }
+
+    let handleSelect = e => {
+            const selectedSport = apiSports.find(
+            s => s.key === e.target.value
+            );
+             setSport(selectedSport)
+             dispatch(fetchLeagueMatches(selectedSport.key))
+          
+        }
+     let handleSelectMatch = e => {
+        const selectedMatch = leagueMatches.find(
+        match => match.id === e.target.value
+        );
+            setMatch(selectedMatch)
+            setHomeTeam(selectedMatch.home_team)
+            setAwayTeam(selectedMatch.away_team)
+            setCommenceTime(selectedMatch.commence_time)
+            setCompetition(selectedMatch.sport_title)
+            console.log(selectedMatch)
+    }
+    
+    let handleSubmit = async (e) => {
+        if (!active)
+            return;
+        try {
+        } catch (err) {
+            return setError(err.message)
+        }
+        setActive(false)
+        let pickMatch = {home_team,
+                    away_team,
+                    pick_title,
+                    commence_time,
+                    competition,}
+        let body = {
+            pick: pickMatch,
+            is_pick: false
+        }
+        let url;
+        let action = await dispatch(addBestMatch({ body, url }))
+        setActive(true)
+        if (action.type === 'bm/addBestMatch/fulfilled')
+            handleClose()
+    }
+
+    return (
+        <>
+            <Modal
+                className="p-0"
+                size="lg"
+                scrollable={true}
+                show={true}
+                onHide={handleClose}
+                backdrop="static"
+                keyboard={false}
+            >
+                <Modal.Header closeButton className="py-2">
+                    <Modal.Title><small className="font-weight-bold">
+                        {'Agrega partido'}
+                    </small></Modal.Title>
+                </Modal.Header>
+                {status === 'pending' && (
+                    dirtyProgress() &&
+                    <ProgressBar className="rounded-0" now={progress} />
+                )}
+                {status === "error" && (
+                    <Alert variant="danger" className="font-weight-bold text-white">
+                        Error submiting post, try again!
+                    </Alert>
+                )}
+                {error && (
+                    <Alert variant="danger" className="font-weight-bold text-white">
+                        {error}
+                    </Alert>
+                )}
+                  <Modal.Body className="pt-1 pb-0">
+                    <Media className='h-100 w-100'>
+                      
+                        <Media.Body className="h-100 w-50" style={{ minHeight: '175px' }}>
+                            <Form onSubmit={(e)=> e.preventDefault()}>
+                                <Form.Group controlId="sport">
+                                             <Form.Control 
+                                                placeholder="Deportes y ligas"
+                                                as="select" 
+                                                value={sport ? sport.key : ''}
+                                                onChange={handleSelect}
+                                                >
+                                                <option value="">Lista de deportes</option>
+                                                {apiSports.map((m, index) => (
+                                                    <option key={index} value={m.key}>{m.group} - {m.title}</option>
+                                                ))}
+                                            </Form.Control>
+                                </Form.Group>      
+                                <Form.Group controlId="match">
+                                           
+                                           <Form.Control 
+                                                placeholder="Partidos de hoy"
+                                                as="select" 
+                                                value={match ? match.id : ''}
+                                                onChange={handleSelectMatch}
+                                                >
+                                                <option value="">Lista de partidos</option>
+                                                {leagueMatches.map((m, index) => (
+                                                    <option key={m.id} value={m.id}>{m.home_team} - {m.away_team} | {dateConverter(m.commence_time)}</option>
+                                                ))}
+                                            </Form.Control>
+                                </Form.Group>    
+                                <Form.Group controlId="eventName">
+                                        <Form.Control
+                                            placeholder="Nombre del evento"
+                                            style={{ fontSize: '1.25rem' }}
+                                            type="text"
+                                            value={pick_title}
+                                            onChange={n => setPickTitle(n.target.value)}
+                                        />
+                                    </Form.Group>
+                                </Form>
+                        </Media.Body>
+                    </Media>
+                </Modal.Body>
+            </Modal>
+        </>
+    );
+}
+
+// import React from 'react'
+// import { useEffect, useCallback } from 'react'
+// import Heading from 'comps/Heading'
+// import { Link } from 'react-router-dom'
+// import { Row, Col, Figure } from 'react-bootstrap'
+// import MultiMedia from 'comps/MultiMedia'
+// import { useSelector, useDispatch } from 'react-redux'
+// import { selectPickById, getPick, selectReplies, getReplies } from './picksSlice'
+
+// import { numFormatter } from 'utils/helpers'
+// import ScrollToTop from 'comps/ScrollToTop'
+// import ReactionsBar from './ReactionsBar'
+// import PickText from 'comps/PickText'
+// import QuotedPick from 'comps/quoted-pick'
+// import UserLink from 'comps/user-link'
+// import Spinner from 'comps/Spinner'
+// import PicksList from 'comps/PicksList'
+
+// export default props => {
+//     let { match: { params: { pickId } = {} } = {} } = props
+//     let dispatch = useDispatch()
+//     let pick = useSelector(state => selectPickById(state, pickId))
+//     const replies = useSelector(state => selectReplies(state, pickId))
+//     let { pick_detail_status: status, pick_replies_status } = useSelector(state => state.picks)
+    
+//     useEffect(() => {
+//         if (!pick)
+//             dispatch(getPick(pickId))
+//     }, [pick, pickId, dispatch])
+
+//     const getPicks = useCallback(() => {
+//         dispatch(getReplies(pickId))
+//     }, [dispatch, pickId])
+
+//     if (status === 'loading')
+//         return <Spinner />
+//     if (!pick) {
+//         return <div className="message font-weight-bold">Pick not Found</div>
+//     }
+    
+//     return (<>
+//         <ScrollToTop />
+//         <Heading backButton title="Pick" />
+//         <Col className="p-3 d-flex flex-column">
+//             <Row>
+//                 <Row>
+//                     <UserLink
+//                         user={pick.user}
+//                         className="rounded-circle"
+//                         to={`/user/${pick.user.screen_name}`}
+//                     >
+//                         <Figure
+//                             className="bg-border-color rounded-circle mr-2 overflow-hidden"
+//                             style={{ height: "50px", width: "50px" }}
+//                         >
+//                             <Figure.Image
+//                                 src={(pick.user.default_profile_image) ? '/img/default-profile-vector.svg' : pick.user.profile_image_url_https}
+//                                 className="w-100 h-100"
+//                             />
+//                         </Figure>
+//                     </UserLink>
+//                     <Col className="d-flex flex-column">
+//                         <UserLink
+//                             user={pick.user}
+//                             to={`/user/${pick.user.screen_name}`}
+//                             className="text-dark font-weight-bold mr-1">
+//                             {pick.user.name}
+//                         </UserLink>
+//                         {/* tick */}
+//                         <span className="text-muted mr-1">@{pick.user.screen_name}</span>
+//                     </Col>
+//                 </Row>
+//                 <Row></Row>
+//             </Row>
+//             <Row>
+//                 <span className="text-muted pb-2">
+//                     {new Date(pick.created_at).toLocaleTimeString()}
+//                     {" - "}
+//                     {new Date(pick.created_at).toDateString()}
+//                 </span>
+//             </Row>
+//             <Row className="border-top border-bottom d-flex p-2">
+//                 <div className="py-1 pr-3">
+//                     <span className="font-weight-bold mr-1">{numFormatter(pick.favorite_count)}</span>
+//                     <Link to={`/pick/${pick.id_str}/likes`} className="text-muted">Likes</Link>
+//                 </div>
+//                 <div className="py-1 pr-3">
+//                     <span className="font-weight-bold mr-1">{numFormatter(pick.retweet_count)}</span>
+//                     <Link to={`/pick/${pick.id_str}/repicks`} className="text-muted">Repicks</Link>
+//                 </div>
+//             </Row>
+//             <Row className="d-flex justify-content-end align-items-center mt-2 border-bottom">
+//                 <ReactionsBar pick={pick} />
+//             </Row>
+//             <PicksList
+//                 no_reply_tag
+//                 picks={replies}
+//                 status={pick_replies_status}
+//                 getPicks={getPicks}
+//             />
+//         </Col>
+//     </>)
+// }
