@@ -37,12 +37,16 @@
     "sass": "^1.57.1",
     "url": "^0.11.0",
     "workbox-webpack-plugin": "^6.5.3"
-  },
+  }, 
+   "engines": {
+      "node": "14.21.3"
+    },
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
-    "eject": "react-app-rewired eject"
+    "eject": "react-app-rewired eject",
+    "render_build": "npm install && npm run build"
   },
   "eslintConfig": {
     "extends": "react-app",
