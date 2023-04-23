@@ -28,7 +28,6 @@ import ChatRoom from 'comps/chat-room-placeholder'
 import { useAlerts } from 'features/alerts/alertsContext'
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
-import betCalculator from 'comps/betCalculator'
 import TextEditor from 'comps/TextEditor'
 
 export default props => {
