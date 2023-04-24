@@ -27,11 +27,12 @@ import ChatRoom from 'comps/chat-room-placeholder'
 
 import { useAlerts } from 'features/alerts/alertsContext'
 import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import TextEditor from 'comps/TextEditor'
 
 export default props => {
     const { ensureCompleteProfile } = useAlerts()
+    const user = useSelector(state => state.auth.user)
     const dispatch = useDispatch()
     useEffect(() => {
         ensureCompleteProfile()
@@ -65,7 +66,7 @@ export default props => {
 
                         <Route path='/' component={Home} />
                     </Switch>
-
+                    {user.role === 'admin' && <Route path='/empezar-pick' component={startPick} />}
                     <Route path='/empezar-pick' component={startPick} />
                     
                 </Col>

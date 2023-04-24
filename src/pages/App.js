@@ -13,7 +13,6 @@ import { useEffect } from 'react'
 import { AlertsPovider } from 'features/alerts/alertsContext'
 
 import { subscribeUserToPush } from '../subscription'
-import SidebarNav from 'layouts/header/sidebar_nav';
 
 //import { render } from '@testing-library/react';
 

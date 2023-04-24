@@ -50,7 +50,7 @@ const AlertsPovider = ({ children, ...props }) => {
     }, [description, history, isAnyModal])
     return (
     <AlertsContext.Provider value={{
-        ensureNotifPermission,
+        //ensureNotifPermission,
         ensureCompleteProfile
     }} {...props}>
         {children}
