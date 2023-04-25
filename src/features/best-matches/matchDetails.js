@@ -93,8 +93,12 @@ export default props => {
                     <div className="team-details">
                       <img
                         className="team-logo"
-                        src={homeTeamImageName ? `/images/${match.competition.toLowerCase()}/${homeTeamImageName}.png` : '/img/default-profile-vector.svg'}
-                        alt={`Logo`}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = `/icons/user.svg`;
+                        }}
+                        src={homeTeamImageName && `/images/${match.competition.toLowerCase().trim()}/${homeTeamImageName}.png`}
+                        alt={homeTeamImageName}
                         loading="lazy"
                       />
                       <div className="team-name-container">
@@ -126,8 +130,12 @@ export default props => {
                     <div className="team-details">
                       {/* {awayTeamImageName && ( */}
                       <img
+                       onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = `/icons/user.svg`;
+                      }}
                         className="team-logo"
-                        src={awayTeamImageName ? `/images/${match.competition.toLowerCase()}/${awayTeamImageName}.png` : '/img/default-profile-vector.svg'}
+                        src={awayTeamImageName && `/images/${match.competition.toLowerCase()}/${awayTeamImageName}.png`}
                         alt={`Logo`}
                         loading="lazy"
                       />

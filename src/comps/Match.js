@@ -24,8 +24,12 @@ const Match = ({ match }) => {
               <td>
                 <div className="team-details">
                   <img
+                     onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = `/icons/user.svg`;
+                    }}
                     className="team-logo"
-                    src={match ? `/images/${match.competition.toLowerCase()}/${match.home_team.split(" ").join("-")}.png` : '/img/default-profile-vector.svg'}
+                    src={match ? `/images/${match.competition.toLowerCase()}/${match.home_team.split(" ").join("-")}.png` : '/icons/user.svg'}
                     alt={`Logo`}
                     loading="lazy"
                   />
@@ -58,6 +62,10 @@ const Match = ({ match }) => {
                 <div className="team-details">
                   {/* {awayTeamImageName && ( */}
                   <img
+                   onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = `/icons/user.svg`;
+                  }}
                     className="team-logo"
                     src={match ? `/images/${match.competition.toLowerCase()}/${match.away_team.split(" ").join("-")}.png` : '/img/default-profile-vector.svg'}
                     alt={`Logo`}
