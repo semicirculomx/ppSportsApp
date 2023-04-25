@@ -79,8 +79,8 @@ function Nav() {
                 <span className="sr-only">new items</span>
               </>
             ) : null;
-          if (item.name === 'Post' && user_role !== 'admin') {
-            return null; // don't render "Post" link for non-admin users
+          if (item.name === 'Post' && user_role !== 'tipster') {
+            return null; // don't render "Post" link for non-tipster users
           }
           return (
             <div key={item.name} className="d-flex align-items-top position-relative">
