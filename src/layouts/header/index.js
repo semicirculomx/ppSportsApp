@@ -20,6 +20,7 @@ import { selectUnread } from 'features/notify/notifySlice'
 function Header(props) {
     let notifsCount = useSelector(selectUnread).length
     let { user: { screen_name } } = useSelector(state => state.auth)
+    let user = useSelector(state => state.auth.user)
     let logo = {
         href: "/home",
     }
@@ -94,11 +95,12 @@ function Header(props) {
                     </div>)
                 })}
             </div>
-
-            <Link className="d-flex btn btn-primary font-weight-bold p-xl-3 rounded-pill" id="compose" to="/compose/post">
-                <span className="d-none d-xl-block mx-auto px-5">{compose.name}</span>
-                <FontAwesomeIcon className="d-xl-none mx-auto" size="2x" icon={compose.icon} />
-            </Link>
+                {user.role === 'tipster' && 
+                            <Link className="d-flex btn btn-primary font-weight-bold p-xl-3 rounded-pill" id="compose" to="/compose/post">
+                            <span className="d-none d-xl-block mx-auto px-5">{compose.name}</span>
+                            <FontAwesomeIcon className="d-xl-none mx-auto" size="2x" icon={compose.icon} />
+                        </Link>
+                }
         </Col >
     )
 }
