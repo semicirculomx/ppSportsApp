@@ -59,7 +59,7 @@ class Compose extends React.Component {
         } = this.props
         if (compose_status === 'error') {
             alert('Post could not be submitted, try again')
-        } else this.context.ensureNotifPermission()
+        } //else this.context.ensureNotifPermission()
     }
     resizeTa() {
         // for auto resizing of text area

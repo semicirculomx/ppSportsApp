@@ -24,8 +24,8 @@ function App() {
   }, [dispatch])
 
   useEffect(() => {
-    if (Notification.permission === 'granted')
-      subscribeUserToPush()
+    // if (Notification.permission === 'granted')
+    //   subscribeUserToPush()
     // eslint-disable-next-line
   }, [])
 

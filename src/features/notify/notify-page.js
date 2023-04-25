@@ -16,7 +16,7 @@ export default props => {
     const dispatch = useDispatch()
     const notifications = useSelector(notifySelectors.selectAll)
     const { user: authUser } = useSelector(state => state.auth)
-    const { ensureNotifPermission } = useAlerts()
+   // const { ensureNotifPermission } = useAlerts()
 
     useEffect(() => {
         dispatch(fetchNotifs())

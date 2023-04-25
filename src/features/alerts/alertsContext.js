@@ -32,15 +32,15 @@ const AlertsPovider = ({ children, ...props }) => {
     }
 
     // kinda apis for this provider
-    const ensureNotifPermission = () => {
-        const delay = 3000
-        setTimeout(() => {
-            /*May be dont ask if it denied already, but lets just keep it for now (¬‿¬)*/
-            const isNotificationPermitted = Notification.permission === 'granted'
-            if (!isAnyModal() && !isNotificationPermitted)
-                setNotifPermission(true)
-        }, delay)
-    }
+    // const ensureNotifPermission = () => {
+    //     const delay = 3000
+    //     setTimeout(() => {
+    //         /*May be dont ask if it denied already, but lets just keep it for now (¬‿¬)*/
+    //         const isNotificationPermitted = Notification.permission === 'granted'
+    //         if (!isAnyModal() && !isNotificationPermitted)
+    //             setNotifPermission(true)
+    //     }, delay)
+    // }
     const ensureCompleteProfile = useCallback(() => {
         const delay = 500
         setTimeout(() => {

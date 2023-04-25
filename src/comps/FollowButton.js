@@ -12,8 +12,8 @@ export default props => {
      * dirty fix, as in unauthenticated, this button wont be visble (hence no handleFollow call, below)
      * but body still executes, giving error
      */
-    if (alerts)
-        ensureNotifPermission = alerts.ensureNotifPermission
+    // if (alerts)
+    //     ensureNotifPermission = alerts.ensureNotifPermission
 
     let { followUser, user, unFollowUser } = props
     let { following } = user;
@@ -22,7 +22,7 @@ export default props => {
     let handleFollow = async e => {
         e.preventDefault()
         followUser(user.screen_name)
-        ensureNotifPermission()
+        //ensureNotifPermission()
     }
     let handleUnFollow = async e => {
         e.preventDefault()
