@@ -3,7 +3,6 @@ import { unescape } from 'html-escaper';
 import anchorme from "anchorme";
 import DOMPurify from 'dompurify';
 import { filterInput } from 'utils/helpers';
-import { truncatedText } from 'utils/helpers';
 
 export default ({ children }) => {
     if (!children || !children.toString)
