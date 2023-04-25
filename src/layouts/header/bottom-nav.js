@@ -19,6 +19,7 @@ function Nav() {
   const {
     user: { screen_name },
   } = useSelector((state) => state.auth);
+  const user_role = useSelector((state) => state.auth.user.role);
 
   const list = [
     {
@@ -63,13 +64,6 @@ function Nav() {
   return (
     <>
       <div className="fixed-bottom bg-color-dark d-flex justify-content-around">
-        <Link
-          style={compose.style}
-          to={compose.href}
-          className="position-absolute"
-        >
-          <FontAwesomeIcon className="" size="2x" icon={compose.icon} />
-        </Link>
         {list.map((item) => {
           const vis = item.disabled ? 'disabled' : '';
           const badge =
@@ -85,6 +79,9 @@ function Nav() {
                 <span className="sr-only">new items</span>
               </>
             ) : null;
+          if (item.name === 'Post' && user_role !== 'admin') {
+            return null; // don't render "Post" link for non-admin users
+          }
           return (
             <div key={item.name} className="d-flex align-items-top position-relative">
               <NavLink
@@ -105,4 +102,4 @@ function Nav() {
   );
 }
 
-export default Nav
+export default Nav;

@@ -66,9 +66,7 @@ export default props => {
 
                         <Route path='/' component={Home} />
                     </Switch>
-                    {user.role === 'admin' && <Route path='/empezar-pick' component={startPick} />}
-                    {/* <Route path='/empezar-pick' component={startPick} /> */}
-                    
+                    {user.role === 'tipster' && <Route path='/empezar-pick' component={startPick} />}                    
                 </Col>
             </Col>
 
