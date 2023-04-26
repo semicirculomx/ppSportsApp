@@ -59,7 +59,7 @@ class Login extends React.Component {
     render() {
         let disabled = this.state.disabled
         return (
-            <Col style={{ maxWidth: "400px" }} className="mx-auto px-3 pb-3">
+            <Col style={{ maxWidth: "400px" }} className="mx-auto border px-3 pb-3">
                 {/* {!this.props.compact && (
                     <Figure className='d-flex flex-column align-items-end'>
                         <Figure.Image
@@ -74,12 +74,14 @@ class Login extends React.Component {
                         </Figure.Caption>
                     </Figure>
                 )} */}
-                <fieldset className="custom-form mt-3" disabled={disabled}>
-                <div class="title">Sports Betting Entertainment,<br/><span>los mejores análisis deportivos en un solo sitio</span></div>
+                <h5 className="font-weight-bolder mt-3">
+                    Inicia sesión para ver tus análisis favoritos
+                </h5>
+                <fieldset disabled={disabled}>
                     <Form onSubmit={this.handleSubmit} >
                         <Form.Group controlId="username">
+                            <Form.Label>Usuario</Form.Label>
                             <Form.Control
-                                placeholder='Usuario'
                                 onChange={this.handleChange}
                                 value={this.state.username}
                                 type="text"
@@ -88,8 +90,8 @@ class Login extends React.Component {
                             ></Form.Control>
                         </Form.Group>
                         <Form.Group className="mb-0" controlId="password">
+                            <Form.Label>Contraseña</Form.Label>
                             <Form.Control
-                                placeholder="Contraseña"
                                 onChange={this.handleChange}
                                 value={this.state.password}
                                 autoCorrect="off"
@@ -97,22 +99,22 @@ class Login extends React.Component {
                                 name="password"
                             ></Form.Control>
                         </Form.Group>
+                        <p>
+                            {/* <small ><Link disabled to="/help">Forgot password?</Link></small>
+                            <br /> */}
+                            <small className="text-danger">{this.state.error}</small>
+                        </p>
                         <div className="d-flex flex-column align-items-center">
-                            <button type="submit" className="btn btn-outline-primary btn-block button-confirm font-weight-bold">
+                            <button type="submit" className="btn btn-outline-primary btn-block rounded-pill font-weight-bold">
                                 Iniciar sesión
                             </button>
                             <small className="text-muted m-2">or</small>
                             <Link
                                 to="/signup"
-                                className="btn button-confirm btn-primary btn-block font-weight-bold"
+                                className="btn btn-primary btn-block rounded-pill font-weight-bold"
                             >
                                 Registrarse
                             </Link>
-                            <p className='mt-1'>
-                            <small ><Link disabled to="/">Forgot password?</Link></small>
-                            <br />
-                            <small className="text-danger">{this.state.error}</small>
-                        </p>
                         </div>
                     </Form>
                 </fieldset>
