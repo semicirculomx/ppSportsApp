@@ -26,9 +26,9 @@ class Login extends React.Component {
         this.setState({ error: null, disabled: true })
         try {
             let form = e.target
-            let username = filterInput(form.username.value, 'username', { min_length: 4 })
+            let username = filterInput(form.username.value, 'username', { min_length: 6 })
             let password = filterInput(form.password.value, 'password')
-            let responce = await fetch('/auth/login', {
+            let response = await fetch('/auth/login', {
                 method: 'POST',
                 body: JSON.stringify({
                     username,
@@ -38,15 +38,15 @@ class Login extends React.Component {
                     'Content-Type': 'application/json'
                 }
             })
-            // console.log(responce);
-            if (responce.status >= 500) {
+            // console.log(response);
+            if (response.status >= 500) {
                 throw Error('Algo salio mal.')
             }
-            else if (responce.status >= 400) {
+            else if (response.status >= 400) {
                 throw Error('Incorrect credentials')
             }
-            else if (responce.ok) {
-                let data = await responce.json()
+            else if (response.ok) {
+                let data = await response.json()
                 console.log(data.message)
                 this.setState({ disabled: false })
                 this.props.login(data.user)
@@ -59,7 +59,7 @@ class Login extends React.Component {
     render() {
         let disabled = this.state.disabled
         return (
-            <Col style={{ maxWidth: "400px" }} className="mx-auto border px-3 pb-3">
+            <Col style={{ maxWidth: "400px" }} className="mx-auto px-3 pb-3">
                 {/* {!this.props.compact && (
                     <Figure className='d-flex flex-column align-items-end'>
                         <Figure.Image
@@ -74,14 +74,12 @@ class Login extends React.Component {
                         </Figure.Caption>
                     </Figure>
                 )} */}
-                <h5 className="font-weight-bolder mt-3">
-                    Inicia sesión para ver tus análisis favoritos
-                </h5>
-                <fieldset disabled={disabled}>
+                <fieldset className="custom-form mt-3" disabled={disabled}>
+                <div class="title">Sports Betting Entertainment,<br/><span>los mejores análisis deportivos en un solo sitio</span></div>
                     <Form onSubmit={this.handleSubmit} >
                         <Form.Group controlId="username">
-                            <Form.Label>Usuario</Form.Label>
                             <Form.Control
+                                placeholder='Usuario'
                                 onChange={this.handleChange}
                                 value={this.state.username}
                                 type="text"
@@ -90,8 +88,8 @@ class Login extends React.Component {
                             ></Form.Control>
                         </Form.Group>
                         <Form.Group className="mb-0" controlId="password">
-                            <Form.Label>Contraseña</Form.Label>
                             <Form.Control
+                                placeholder="Contraseña"
                                 onChange={this.handleChange}
                                 value={this.state.password}
                                 autoCorrect="off"
@@ -99,22 +97,22 @@ class Login extends React.Component {
                                 name="password"
                             ></Form.Control>
                         </Form.Group>
-                        <p>
-                            {/* <small ><Link disabled to="/help">Forgot password?</Link></small>
-                            <br /> */}
-                            <small className="text-danger">{this.state.error}</small>
-                        </p>
                         <div className="d-flex flex-column align-items-center">
-                            <button type="submit" className="btn btn-outline-primary btn-block rounded-pill font-weight-bold">
+                            <button type="submit" className="btn btn-outline-primary btn-block button-confirm font-weight-bold">
                                 Iniciar sesión
                             </button>
                             <small className="text-muted m-2">or</small>
                             <Link
                                 to="/signup"
-                                className="btn btn-primary btn-block rounded-pill font-weight-bold"
+                                className="btn button-confirm btn-primary btn-block font-weight-bold"
                             >
                                 Registrarse
                             </Link>
+                            <p className='mt-1'>
+                            <small ><Link disabled to="/">Forgot password?</Link></small>
+                            <br />
+                            <small className="text-danger">{this.state.error}</small>
+                        </p>
                         </div>
                     </Form>
                 </fieldset>

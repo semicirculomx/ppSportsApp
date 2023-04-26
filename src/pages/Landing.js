@@ -15,7 +15,7 @@ export default props => {
         <Router>
             <>
                 <Navbar />
-                <Container>
+                <Container className='vh-100 d-flex justify-content-center align-items-center'>
                     <Row>
                         <Col xs="12" lg="7">
                             <Switch>

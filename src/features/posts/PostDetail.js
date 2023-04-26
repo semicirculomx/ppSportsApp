@@ -110,6 +110,7 @@ export default props => {
                 no_carousel
                 no_reply_tag
                 comments
+                expanded
                 posts={replies}
                 status={post_replies_status}
                 getPosts={getPosts}

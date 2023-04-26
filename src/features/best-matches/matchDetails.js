@@ -6,7 +6,7 @@ import { Row, Col, Figure, Button } from 'react-bootstrap'
 import { useSelector, useDispatch } from 'react-redux'
 import { selectPostById, getPost, selectReplies, getReplies } from 'features/posts/postsSlice'
 import { getMatch, selectMatchById } from './bmSlice';
-import { calculateImpliedProbability, dateConverter, numFormatter, truncatedText } from 'utils/helpers'
+import { calculateImpliedProbability, dateConverter } from 'utils/helpers'
 import ScrollToTop from 'comps/ScrollToTop'
 import UserLink from 'comps/user-link'
 import Spinner from 'comps/Spinner'
