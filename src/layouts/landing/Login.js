@@ -4,7 +4,9 @@ import { filterInput } from 'utils/helpers'
 // import { AuthContext } from 'utils/context/auth'
 import { connect } from 'react-redux'
 import { login } from 'store/authSlice'
-import { Figure, Form, Col } from 'react-bootstrap'
+import { Figure, Form, Col, Button } from 'react-bootstrap'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faDiscord, faFacebook, faGoogle, faTwitter } from '@fortawesome/free-brands-svg-icons'
 
 class Login extends React.Component {
     // static contextType = AuthContext;
@@ -59,66 +61,74 @@ class Login extends React.Component {
     render() {
         let disabled = this.state.disabled
         return (
-            <Col style={{ maxWidth: "400px" }} className="mx-auto border px-3 pb-3">
-                {/* {!this.props.compact && (
-                    <Figure className='d-flex flex-column align-items-end'>
-                        <Figure.Image
-                            className='align-self-start'
-                            width={250}
-                            height={250}
-                            src="/img/login-thumb-vector.svg"
-                            alt="people vector"
-                        />
-                        <Figure.Caption as="a" href="https://www.freepik.com/free-photos-vectors/people">
-                            <small className="text-muted text-wrap">People vector created by pikisuperstar - www.freepik.com</small>
-                        </Figure.Caption>
-                    </Figure>
-                )} */}
-                <h5 className="font-weight-bolder mt-3">
-                    Inicia sesión para ver tus análisis favoritos
-                </h5>
-                <fieldset disabled={disabled}>
-                    <Form onSubmit={this.handleSubmit} >
-                        <Form.Group controlId="username">
-                            <Form.Label>Usuario</Form.Label>
-                            <Form.Control
-                                onChange={this.handleChange}
-                                value={this.state.username}
-                                type="text"
-                                name="username"
-                                autoCapitalize="off"
-                            ></Form.Control>
-                        </Form.Group>
-                        <Form.Group className="mb-0" controlId="password">
-                            <Form.Label>Contraseña</Form.Label>
-                            <Form.Control
-                                onChange={this.handleChange}
-                                value={this.state.password}
-                                autoCorrect="off"
-                                type="password"
-                                name="password"
-                            ></Form.Control>
-                        </Form.Group>
-                        <p>
-                            {/* <small ><Link disabled to="/help">Forgot password?</Link></small>
-                            <br /> */}
-                            <small className="text-danger">{this.state.error}</small>
-                        </p>
-                        <div className="d-flex flex-column align-items-center">
-                            <button type="submit" className="btn btn-outline-primary btn-block rounded-pill font-weight-bold">
-                                Iniciar sesión
-                            </button>
-                            <small className="text-muted m-2">or</small>
-                            <Link
-                                to="/signup"
-                                className="btn btn-primary btn-block rounded-pill font-weight-bold"
-                            >
-                                Registrarse
-                            </Link>
-                        </div>
-                    </Form>
-                </fieldset>
-            </Col>
+            <Col style={{ maxWidth: "400px" }} className="mx-auto my-4 px-1 pb-3">
+                
+            <fieldset className="custom-form mt-3" disabled={disabled}>
+            <Figure
+                    className="mx-auto ml-2 logo-transparent d-flex align-items-center"
+                    style={{ height: "125px", width: "225px" 
+                }}
+                >
+                    <Figure.Image
+                        src={'playerpicks-alt.png'}
+                        className="w-100 h-100"
+                    />
+                </Figure> 
+            <div class="title">Sports Betting Entertainment,
+            <br /><span>los mejores análisis deportivos en un solo sitio</span>
+            </div>             
+                <Form onSubmit={this.handleSubmit} >
+                <Form.Group controlId="username">
+                  <Form.Control
+                    placeholder='Usuario'
+                    onChange={this.handleChange}
+                    value={this.state.username}
+                    type="text"
+                    name="username"
+                    autoCapitalize="off"
+                  />
+                </Form.Group>
+                <Form.Group className="mb-3" controlId="password">
+                  <Form.Control
+                    placeholder="Contraseña"
+                    onChange={this.handleChange}
+                    value={this.state.password}
+                    autoCorrect="off"
+                    type="password"
+                    name="password"
+                  />
+                </Form.Group>
+                <p>
+                  {/* <small ><Link disabled to="/help">Forgot password?</Link></small>
+                      <br /> */}
+                 <small className="text-danger">{this.state.error}</small>
+                </p>
+                <div className='mr-auto ml-auto mt-4 social-login d-flex justify-content-between text-center w-50'>
+                    <Button> <FontAwesomeIcon icon={faGoogle}></FontAwesomeIcon> </Button>
+                    <Button> <FontAwesomeIcon icon={faDiscord}></FontAwesomeIcon> </Button>
+                    <Button> <FontAwesomeIcon icon={faTwitter}></FontAwesomeIcon> </Button>
+
+                </div>
+                <div className="d-flex flex-column align-items-center mt-4 px-4 pt-0">
+                  <div className="d-flex justify-content-between align-items-center w-100 mb-2">
+                  <Link
+                        to="/signup"
+                        className="btn button-confirm btn-primary font-weight-bold"
+                      >
+                        Registrarse
+                      </Link>
+                    <small className="text-muted ml-2"> ó </small>
+                    <Button type="submit" className="btn btn-outline-primary button-confirm font-weight-bold ml-2">
+                      Iniciar sesión
+                    </Button>
+                  </div>
+                  <p className='mt-1'>
+                    <small className="text-danger">Recuperar contraseña</small>
+                  </p>
+                </div>
+              </Form>
+            </fieldset>
+          </Col>
         )
     }
 }

@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom'
 import { filterInput } from 'utils/helpers'
 import { connect } from 'react-redux'
 import { login } from 'store/authSlice'
-import { Figure, Form, Col } from 'react-bootstrap'
+import { Figure, Form, Col, Button } from 'react-bootstrap'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faDiscord, faGoogle, faTwitter } from '@fortawesome/free-brands-svg-icons'
 
 class Signup extends React.Component {
     state = {
@@ -48,25 +50,24 @@ class Signup extends React.Component {
     render() {
         let disabled = this.state.disabled
         return (
-            <Col style={{ maxWidth: "400px" }} className="mx-auto border px-3 py-4">
-                {/* <Figure className='d-flex flex-column align-items-end'>
+            <Col style={{ maxWidth: "400px" }} className="mx-auto my-4 px-1 pb-3">
+                
+            <fieldset className="custom-form mt-3" disabled={disabled}>
+            <Figure
+                    className="mx-auto ml-2 logo-transparent d-flex align-items-center"
+                    style={{ height: "125px", width: "225px" 
+                }}
+                >
                     <Figure.Image
-                        className='align-self-start'
-                        width={250}
-                        height={250}
-                        src="/img/login-thumb-vector.svg"
-                        alt="people vector"
+                        src={'playerpicks-alt.png'}
+                        className="w-100 h-100"
                     />
-                    <Figure.Caption as="a" href="https://www.freepik.com/free-photos-vectors/people">
-                        <small className="text-muted text-wrap">People vector created by pikisuperstar - www.freepik.com</small>
-                    </Figure.Caption>
-                </Figure> */}
-                <h5 className="font-weight-bolder">
-                    Regístrate a Player Picks
-                </h5>
-                <fieldset disabled={disabled}>
-                    <Form onSubmit={this.handleSubmit}>
-                        <Form.Group controlId="username">
+                </Figure> 
+            <div class="title">Sports Betting Entertainment,
+            <br /><span>los mejores análisis deportivos en un solo sitio</span>
+            </div>             
+                <Form onSubmit={this.handleSubmit} >
+                <Form.Group controlId="username">
                             <Form.Label>Elige un nombre de usuario - <small className="text-muted">requerido</small></Form.Label>
                             <Form.Control
                                 type="text"
@@ -90,27 +91,36 @@ class Signup extends React.Component {
                                 name="password"
                             ></Form.Control>
                         </Form.Group>
-                        <p className="mt-n2">
-                            <small>Ya tienes una cuenta? <Link to="/login">Inicia sesión</Link></small>
+                <p>
+                <small>Ya tienes una cuenta? <Link to="/login">Inicia sesión</Link></small>
                             <br />
-                            <small className="text-danger">{this.state.error}</small>
-                        </p>
-                        <div className="d-flex flex-column align-items-center">
-                            <button
-                                type="submit"
-                                className="btn btn-outline-primary font-weight-bold rounded-pill btn-block">
-                                <span>Entrar</span>
-                            </button>
-                            <div className="seperator"><span>or</span></div>
-                            <Link
-                                to="login"
-                                className="btn btn-primary font-weight-bold rounded-pill btn-block">
-                                <span>Inicia sesión</span>
-                            </Link>
-                        </div>
-                    </Form>
-                </fieldset>
-            </Col>
+                  {/* <small ><Link disabled to="/help">Forgot password?</Link></small>
+                      <br /> */}
+                 <small className="text-danger">{this.state.error}</small>
+                </p>
+                <div className='mr-auto ml-auto mt-4 social-login d-flex justify-content-between text-center w-50'>
+                    <Button> <FontAwesomeIcon icon={faGoogle}></FontAwesomeIcon> </Button>
+                    <Button> <FontAwesomeIcon icon={faDiscord}></FontAwesomeIcon> </Button>
+                    <Button> <FontAwesomeIcon icon={faTwitter}></FontAwesomeIcon> </Button>
+
+                </div>
+                <div className="d-flex flex-column align-items-center mt-4 px-4 pt-0">
+                  <div className="d-flex justify-content-between align-items-center w-100 mb-2">
+                  <Link
+                        to="/login"
+                        className="btn button-confirm btn-primary font-weight-bold"
+                      >
+                        Inicia Sesión
+                      </Link>
+                    <small className="text-muted ml-2"> ó </small>
+                    <Button type="submit" className="btn btn-outline-primary button-confirm font-weight-bold ml-2">
+                      Regístrate
+                    </Button>
+                  </div>
+                </div>
+              </Form>
+            </fieldset>
+          </Col>
         )
     }
 }
