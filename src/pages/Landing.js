@@ -28,6 +28,9 @@ export default props => {
             <Route path="/login">
           <Login />
             </Route>
+            <Route path="/">
+               <Login />
+            </Route>
            </Switch>
           </Col>
         </Row>
