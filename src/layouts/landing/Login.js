@@ -74,7 +74,7 @@ class Login extends React.Component {
                         className="w-100 h-100"
                     />
                 </Figure> 
-            <div class="title">Sports Betting Entertainment,
+            <div className="title">Sports Betting Entertainment,
             <br /><span>los mejores análisis deportivos en un solo sitio</span>
             </div>             
                 <Form onSubmit={this.handleSubmit} >

@@ -129,42 +129,8 @@ const [secondLevelFilter, setSecondLevelFilter] = useState('recent');
                 <Row className="d-flex px-3 pb-1 mt-n2 text-muted">
                     <PostTag no_reply_tag={no_reply_tag} post={post} />
                 </Row>
-                <Link className="stretched-link" to={`/post/${post.id_str}`}></Link>
-                <Media className="mb-n2 w-100">
-                    <UserLink
-                        user={post.user}
-                        className="rounded-circle"
-                    >
-                        <Figure
-                            className="bg-border-color rounded-circle mr-2 overflow-hidden"
-                            style={{ height: "30px", width: "30px" }}
-                        >
-                            <Figure.Image
-                                src={(post.user.default_profile_image) ? '/img/default-profile-vector.svg' : post.user.profile_image_url_https}
-                                className="w-100 h-100"
-                            />
-                        </Figure>
-                    </UserLink>
-                    <Media.Body className="w-50">
-                        <Row className="d-flex align-items-center">
-                          
-                            {/* tick */}
-                            <span className="text-muted mr-1">@{post.user.screen_name}</span>
-                            <pre className="m-0 text-muted">{" - "}</pre>
-                            <span className="text-muted"><ReactTimeAgo date={Date.parse(post.created_at)} timeStyle="twitter" /></span>
-                        </Row>
-                        <Row className="mb-n1 mt-1"><blockquote className="mb-1 mw-100">
-                            <PostText to={`/post/${post.id_str}`} post={post} />
-                        </blockquote></Row>
-                        <Row>
-                            <MultiMedia
-                                className="mt-2"
-                                post={post} />
-                            <QuotedPost className="mt-2" post={!no_reply_tag && post.quoted_status} />
-                        </Row>
-                       
-                    </Media.Body>
-                </Media>
+                {/* <Link className="stretched-link" to={`/post/${post.id_str}`}></Link> */}
+                <Post post={post} no_reply_tag={no_reply_tag} comments={comments} />
             </ListGroup.Item>
         )
     }) : (status === 'idle' &&

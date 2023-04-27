@@ -41,7 +41,7 @@ function SearchBar(props) {
                         style={{ backgroundColor: "rgb(233,236,239)" }}
                         size="sm"
                         type="search"
-                        placeholder="Busca por partido, hashtag o experto"
+                        placeholder="Palabra clave, #hashtag o @experto"
                         name="search"
                         id="tsearch"
                     />

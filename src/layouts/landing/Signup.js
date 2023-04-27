@@ -114,7 +114,7 @@ class Signup extends React.Component {
                       </Link>
                     <small className="text-muted ml-2"> ó </small>
                     <Button type="submit" className="btn btn-outline-primary button-confirm font-weight-bold ml-2">
-                      Regístrate
+                      Registrate
                     </Button>
                   </div>
                 </div>

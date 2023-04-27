@@ -80,7 +80,7 @@ export default props => {
                     </Media>
                 </ListGroup.Item>)
             }) : (status === 'idle' &&
-                <div className="message font-weight-bold">No users to show</div>
+                <div className="message font-weight-bold">No hay más usuarios</div>
             )}
             {status === 'loading' ? <Spinner /> : null}
             {status === 'error' && <TryAgain fn={getUsers} />}

@@ -16,7 +16,7 @@ const OnClick = (() => {
     });
 })();
 
-export default ({ post, expanded = false, to }) => {
+export default ({ post, expanded = false, to, comment }) => {
     const history = useHistory()
     let { text, htmlContent } = post
     if (!expanded) {
@@ -24,8 +24,16 @@ export default ({ post, expanded = false, to }) => {
         htmlContent = text
     } 
     return (
-    <div {...OnClick((e) => { to && history.push(to) })}>
-        <WithUrls>{htmlContent}</WithUrls>
-    </div>
+        <>
+        {!comment ? (
+            <div {...OnClick((e) => { to && history.push(to) })}>
+            <WithUrls>{htmlContent}</WithUrls>
+        </div>
+        ):           
+        <WithUrls>{text}</WithUrls>
+    }
+
+        </>
+
     )
 }
