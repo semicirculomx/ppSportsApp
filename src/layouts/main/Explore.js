@@ -15,7 +15,7 @@ import { changeQuery } from 'features/search/searchSlice'
 
 export default (props) => {
     let dispatch = useDispatch()
-    let users = useSelector(state => selectSearchUsers(state, '@jorzarios'))
+    let users = useSelector(state => selectSearchUsers(state, '@player10maker'))
     let { status } = useSelector(state => state.search)
 
     let getUsers = () => {
