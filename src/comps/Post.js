@@ -157,7 +157,29 @@ function Post({ post, no_reply_tag, comments}) {
                                 post={post} />
                             <QuotedPost className="mt-2" post={!no_reply_tag && post.quoted_status} />
                         </Row>
-                       
+                        <Row className="align-items-center" justify-content="between">
+                          <Col>
+                            {authUser?._id === post?.user._id && (
+                              <Dropdown drop="up" className="bg-clear high-index">
+                                <Dropdown.Toggle
+                                  className="btn btn-naked-primary rounded-pill"
+                                  id="comment-dropdown"
+                                >
+                                  {<FontAwesomeIcon icon={faEllipsisH} />}
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu alignRight className="higher-index rounded-0">
+                                  <Dropdown.Item
+                                    className="high-index"
+                                    as='button'
+                                    onClick={e => deletePost(post)}
+                                  >Borrar</Dropdown.Item>
+                                </Dropdown.Menu>
+                              </Dropdown>)}
+                          </Col>
+                          <Col >
+                            <ReactionsBar no_reply post={post} />
+                          </Col>
+                        </Row>
                     </Media.Body>
                 </Media>
 }

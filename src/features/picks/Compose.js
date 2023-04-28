@@ -29,6 +29,7 @@ export default props => {
     let dispatch = useDispatch()
 
     let { user } = useSelector(state => state.auth)
+    let { api_sports_status: apiStatus } = useSelector(state => state.picks)
     let apiSports = useSelector(selectApiSports)
     let leagueMatches = useSelector(selectLeagueMatches)
 
@@ -59,6 +60,7 @@ export default props => {
     let [initialContent, setInitialContent] = useState('Escribe aquí tus análisis y predicciones...')
     let [placeholder, setPlaceholder] = useState(true)
     let [bookmaker, setBookmaker] = useState(null)
+    let [post_categories, setCategory] = useState([])
 
     let [progress, setProgress] = useState(0)
 
@@ -100,7 +102,6 @@ export default props => {
         return true
     }
     const handleClose = () => {
-        console.log(status)
         if (status !== 'error' || true) {
             setError(null)
             history.goBack()
@@ -114,14 +115,23 @@ export default props => {
             setHeight('auto')
         }
     }
+    const addCategory = (newCategory) => {
+        setCategory([...post_categories, newCategory]);
+      };
     useEffect(() => {
-        dispatch(getSportsData())
         if (ta.current) {
             ta.current.focus()
             let height = ta.current.scrollHeight
             setHeight(height + 'px')
         }
-    }, [editor_text])
+    }, [editor_text])  
+    
+    useEffect(() => {
+        if ((apiStatus === 'idle' || apiStatus === 'done') && !apiSports.length) {
+            dispatch(getSportsData())
+            // console.log('fetching on posts load, status:', status)
+        }
+    }, [apiStatus, apiSports, dispatch])
 
     const handleChange = e => {
         resizeTa()
@@ -132,8 +142,9 @@ export default props => {
 
     /* Handle selected sport */
     const handleSelectSport = (selectedSport) => {
-        setSport(selectedSport[0])
-        if (selectedSport.length > 0) {
+        if (selectedSport.length) {
+            setSport(selectedSport[0])
+            addCategory(selectedSport[0].group ? selectedSport[0].group : selectedSport[0].label)
             if (selectedSport[0].customOption) {
                 dispatch(fetchLeagueMatches('upcoming'))
             } else {
@@ -150,9 +161,6 @@ export default props => {
         setHtmlContent(htmlContent);
         extractImages(htmlContent);
         placeholder && setPlaceholder(false);
-        console.log(htmlContent)
-        console.log(text)
-
     }
 
     const extractImages = (htmlContent) => {
@@ -256,6 +264,8 @@ export default props => {
                 post_title: pick_title,
                 base64Images,
                 htmlContent: htmlSanitized,
+                post_categories
+
             };
         }
 
@@ -353,8 +363,7 @@ export default props => {
                                         </Form.Group>
                                     </>
                                 )}
-                                {type !== 'analisis' && (
-                                    <>
+
                                         {apiSports.length > 0 && (
                                             <Form.Group controlId="sport">
                                                 <Typeahead
@@ -370,7 +379,8 @@ export default props => {
                                                 />
                                             </Form.Group>
                                         )}
-
+                                {type !== 'analisis' && (
+                                    <>
                                         {sport && (
                                             <Form.Group controlId="match">
                                                 <Typeahead

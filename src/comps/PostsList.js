@@ -68,7 +68,7 @@ const [secondLevelFilter, setSecondLevelFilter] = useState('recent');
       };
 
       let filteredPosts = posts.filter((post) => {
-        if (categoryFilter !== 'all' && post.post_category !== categoryFilter) {
+        if (categoryFilter !== 'all' && !post.post_categories.includes(categoryFilter)) {
           return false;
         }
       

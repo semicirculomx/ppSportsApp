@@ -164,10 +164,10 @@ export default props => {
                     )}
                 </Row>
                 <Row className="d-flex my-2 justify-content-between w-100">
-                    {/* <Link
+                    { user.role === 'tipster' &&  <Link
                         to={`/user/${user.screen_name}/followers`}
                         className="text-muted mr-2"
-                    >{numFormatter(user.followers_count)} <span>Seguidores</span></Link> */}
+                    >{numFormatter(user.followers_count)} <span>Seguidores</span></Link> }
 
                     <Link
                         to={`/user/${user.screen_name}/friends`}

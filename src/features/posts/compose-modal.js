@@ -171,7 +171,7 @@ export default props => {
                                 name="text"
                                 onChange={handleChange}
                                 value={editor_text}
-                                placeholder="What's happening?"
+                                placeholder="Escribe tu comentario.."
                             >
                             </textarea>
                             <QuotedPost className="mb-2 mt-n5" post={replyPost || quotePost} />
@@ -195,7 +195,7 @@ export default props => {
                                 onClick={handleSubmit}
                                 disabled={!active}
                                 className="btn btn-primary rounded-pill px-3 py-2 font-weight-bold">
-                                Post
+                                Publicar
                             </button>
                         </div>
                     </div>

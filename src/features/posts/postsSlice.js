@@ -331,7 +331,7 @@ export const selectPostsByCategory = createSelector(
         // si la categoría seleccionada no es "all", filtra los posts por la categoría seleccionada
         return posts.filter(
             post => 
-            (post.post_category === category && post.in_reply_to_status_id === null) 
+            (!post.post_categories.includes(category) && post.in_reply_to_status_id === null) 
             )
       }
     }

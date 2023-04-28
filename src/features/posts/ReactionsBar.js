@@ -40,12 +40,14 @@ export default props => {
     return (
     <div className='text-right'>
                 {/* reply */}
-                <Link
-            to={`/compose/post?reply_to=${post.id_str}`}
-            className="btn btn-naked-secondary rounded-pill high-index"
-        >
-            <FontAwesomeIcon style={{ fontSize: '1.2em' }} className='mb-1 text-muted' icon={faReply} />
-        </Link>
+             {!props.no_reply && 
+                    <Link
+                    to={`/compose/post?reply_to=${post.id_str}`}
+                    className="btn btn-naked-secondary rounded-pill high-index"
+                >
+                    <FontAwesomeIcon style={{ fontSize: '1.2em' }} className='mb-1 text-muted' icon={faReply} />
+                </Link>
+             }   
         {/* repost / quote */}
         {/* <Dropdown drop="up" className="bg-clear high-index">
             <Dropdown.Toggle
@@ -75,9 +77,11 @@ export default props => {
             onClick={handleLike}
             className="btn btn-naked-danger high-index"
         >
-            {post.favorited ? (
+            {
+            (!props.no_reply) ? (
                 <FontAwesomeIcon icon={faFireAlt} />
-            ) : <FontAwesomeIcon icon={faFireAlt} />}
+            ) : <FontAwesomeIcon icon={faFireAlt} />
+            }
 
             <small className="m-1">{numFormatter(post.favorite_count)}</small>
         </button>
