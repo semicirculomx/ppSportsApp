@@ -307,10 +307,27 @@ a+span.badge {
 
     }
 
+    &.pending::before {
+      background-color: rgb(93, 93, 93);
+    }
+    &.cashback::before {
+      background-color: orange;
+    }
+    &.canceled::before {
+      background-color: gray;
+    }
+    &.half-won::before {
+      background-color: greenyellow;
+    }
+    &.half-lost::before {
+      background-color: rosybrown;
+    }
+    &.void::before {
+      background-color: rosybrown;
+    }
     &.won::before {
       background-color: green;
     }
-
     &.lost::before {
       background-color: $primary;
     }

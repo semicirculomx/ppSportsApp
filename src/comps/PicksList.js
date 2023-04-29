@@ -61,7 +61,7 @@ function PicksList(props) {
       <ListGroup className=" pick-card" variant="flush">
         {(picks && picks.length > 0) ?
           filteredPicks.map((pick, index) => (
-            <ListGroup.Item key={pick.id_str} className={pick.status === 'pending' ? 'won' : 'lost'}>
+            <ListGroup.Item key={pick.id_str} className={pick.status}>
               <Pick pick={pick} />
             </ListGroup.Item>
           )) : (status === 'idle' &&

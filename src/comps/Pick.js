@@ -57,7 +57,52 @@ function Pick({pick}) {
     }
   };
 
-
+  function getBadgeClass(status) {
+    switch (status) {
+      case "won":
+        return "bg-success";
+      case "lost":
+        return "bg-danger";
+      case "void":
+        return "bg-secondary";
+      case "pending":
+        return "bg-secondary";
+      case "cashback": // Aquí está la corrección
+        return "bg-warning";
+      case "canceled":
+        return "bg-dark";
+      case "half-won":
+        return "bg-secondary";
+      case "half-lost":
+        return "bg-secondary";
+      default:
+        return "bg-secondary";
+    }
+  }
+  
+  function getBadgeText(status) {
+    console.log(status)
+    switch (status) {
+      case "won":
+        return "Ganada";
+      case "lost":
+        return "Perdida";
+      case "void":
+        return "Nulo";
+      case "pending":
+        return "Pendiente";
+      case "cashback":
+        return "Reembolsada";
+      case "canceled":
+        return "Cancelada";
+      case "half-won":
+        return "Mitad ganada";
+      case "half-lost":
+        return "Mitad perdida";
+      default:
+        return "Desconocido";
+    }
+  }  
 
   const handleConfirmDelete = async () => {
     try {
@@ -82,7 +127,9 @@ function Pick({pick}) {
         </div>
         <div className="d-flex w-100 justify-content-between align-items-center">
           <p className="mb-1 text-muted">{pick?.totalOdds}</p>
-          <span className="badge bg-success rounded-pill">{pick?.status === 'pending' ? 'Ganada' : 'Perdida'}</span>
+          <span className={`badge rounded-pill ${getBadgeClass(pick?.status)}`}>
+            {getBadgeText(pick?.status)}
+          </span>
         </div>
         {isExpanded && (
           <div className="expanded-info">
@@ -159,6 +206,7 @@ function Pick({pick}) {
               >
                 <option value="won">Ganada</option>
                 <option value="lost">Perdida</option>
+                <option value="void">Nulo</option>
                 <option value="pending">Pendiente</option>
                 <option value="cashback ">Reembolsada</option>
                 <option value="canceled">Cancelada</option>
