@@ -102,6 +102,7 @@ export default props => {
         return true
     }
     const handleClose = () => {
+        console.log(status)
         if (status !== 'error' || true) {
             setError(null)
             history.goBack()
@@ -115,17 +116,14 @@ export default props => {
             setHeight('auto')
         }
     }
-    const addCategory = (newCategory) => {
-        setCategory([...post_categories, newCategory]);
-      };
     useEffect(() => {
         if (ta.current) {
             ta.current.focus()
             let height = ta.current.scrollHeight
             setHeight(height + 'px')
         }
-    }, [editor_text])  
-    
+    }, [editor_text])
+
     useEffect(() => {
         if ((apiStatus === 'idle' || apiStatus === 'done') && !apiSports.length) {
             dispatch(getSportsData())
@@ -142,9 +140,8 @@ export default props => {
 
     /* Handle selected sport */
     const handleSelectSport = (selectedSport) => {
-        if (selectedSport.length) {
-            setSport(selectedSport[0])
-            addCategory(selectedSport[0].group ? selectedSport[0].group : selectedSport[0].label)
+        setSport(selectedSport[0])
+        if (selectedSport.length > 0) {
             if (selectedSport[0].customOption) {
                 dispatch(fetchLeagueMatches('upcoming'))
             } else {
@@ -264,8 +261,7 @@ export default props => {
                 post_title: pick_title,
                 base64Images,
                 htmlContent: htmlSanitized,
-                post_categories
-
+                post_categories: []
             };
         }
 
@@ -279,6 +275,23 @@ export default props => {
                 totalOdds,
             };
             body.pick = pick;
+            if(body.post.text) {
+                body.post.post_categories = bets.map((e) => e.match.sport)
+            }
+        } else {
+            body.post.post_categories = [sport.group ? sport.group : sport.label]
+            body.post.bets = [{
+                match: {
+                home_team: match.home_team ? match.home_team : undefined,
+                away_team: match.away_team ? match.away_team : undefined,
+                commence_time: match.commence_time ? match.commence_time : undefined,
+                sport: sport.group ? sport.group : sport.label,
+                competition: match.sport_title ? match.sport_title : sport.title,
+                match_id: !match.customOption ? match.id : `custom-${matchTitle}-${Date.now()}`,
+                customOption: match.customOption ? match.customOption : false,
+                bookmaker: bookmaker ? bookmaker : null,     
+                }
+            }]
         }
 
         console.log(body);
@@ -379,8 +392,7 @@ export default props => {
                                                 />
                                             </Form.Group>
                                         )}
-                                {type !== 'analisis' && (
-                                    <>
+
                                         {sport && (
                                             <Form.Group controlId="match">
                                                 <Typeahead
@@ -397,7 +409,8 @@ export default props => {
                                             </Form.Group>
                                         )}
                                         <hr />
-
+                                        {type !== 'analisis' && (
+                                    <>
                                         {type === 'apuesta' && (
                                             <>
                                                 <Form.Group controlId="matchTitle">
