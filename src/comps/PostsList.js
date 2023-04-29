@@ -78,7 +78,7 @@ const [secondLevelFilter, setSecondLevelFilter] = useState('recent');
             return posts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
           case 'most-liked':
             // Ordena por número de likes y devuelve los más populares
-            return posts.sort((a, b) => b.likes.length - a.likes.length);
+            return posts.sort((a, b) => b.favorite_count - a.favorite_count);
           case 'lost':
             // Filtra por estado "lost"
             return post.pick?.status === 'lost';
