@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Media, Row, Col, Badge, Button, Modal, Form } from 'react-bootstrap';
 import PostText from './PostText';
 import ReactionsBar from 'features/posts/ReactionsBar'
-import { gameDate } from 'utils/helpers';
+import { dateConverter, gameDate } from 'utils/helpers';
 import ReactTimeAgo from 'react-time-ago';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -15,23 +15,16 @@ import { removePick, updatePick } from 'features/picks/picksSlice';
 
 function Pick({pick}) {
   let { user: authUser, isAuthenticated } = useSelector(state => state.auth)
-  let { remove_status: status } = useSelector(state => state.posts)
+  let { remove_status: status_remove } = useSelector(state => state.picks)
+  let { update_status: status_update } = useSelector(state => state.posts)
 
   const [isExpanded, setIsExpanded] = useState(false);
   let [showPrompt, setShowPrompt] = useState(false)
-  let [promptHeader, setPromptHeader] = useState('')
-  let [promptBody, setPromptBody] = useState('')
   const dispatch = useDispatch();
   let [error, setError] = useState(null)
-  let history = useHistory()
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState(pick.status);
 
-  const deletePick = () => {
-    setPromptHeader('Seguro que quieres borrar este pick?')
-    setPromptBody('No podrás recuperarlo')
-    setShowPrompt(true)
-  }
   const handleExpandClick = () => {
     setIsExpanded(!isExpanded);
   };
@@ -46,49 +39,50 @@ function Pick({pick}) {
 
   };
 
-  const updatePickStatus = () => {
+  const updatePickStatus = async () => {
     let body = { ...pick , status: selectedStatus }
-        // Implementa la lógica de actualización del estado del pick en el store de Redux
+    let action;
     try {
-      dispatch(updatePick(body));
-      setShowEditModal(false);
+      if(pick.status !== selectedStatus)
+       action = await dispatch(updatePick(body));
+       if(action.type === 'picks/updatePick/fulfilled')
+          setShowEditModal(false);
     } catch (error) {
       setError(error);
     }
   };
 
-  function getBadgeClass(status) {
+  const getBadgeClass = (status) => {
     switch (status) {
       case "won":
-        return "bg-success";
+        return "bg-won";
       case "lost":
-        return "bg-danger";
+        return "bg-lost";
       case "void":
-        return "bg-secondary";
+        return "bg-void";
       case "pending":
-        return "bg-secondary";
+        return "bg-pending";
       case "cashback": // Aquí está la corrección
-        return "bg-warning";
+        return "bg-cashback";
       case "canceled":
-        return "bg-dark";
+        return "bg-canceled";
       case "half-won":
-        return "bg-secondary";
+        return "bg-won";
       case "half-lost":
-        return "bg-secondary";
+        return "bg-won";
       default:
-        return "bg-secondary";
+        return "bg-pending";
     }
   }
   
-  function getBadgeText(status) {
-    console.log(status)
+  const getBadgeText = (status) => {
     switch (status) {
       case "won":
         return "Ganada";
       case "lost":
         return "Perdida";
       case "void":
-        return "Nulo";
+        return "Anulada";
       case "pending":
         return "Pendiente";
       case "cashback":
@@ -103,17 +97,17 @@ function Pick({pick}) {
         return "Desconocido";
     }
   }  
-
   const handleConfirmDelete = async () => {
     try {
+      setShowPrompt(false)
       let action = await dispatch(removePick(pick?._id))
-
-      if (action.type === 'picks/removePick/fulfilled') console.log('deleted', action.payload)
-
+      if (action.type === 'picks/removePick/fulfilled') console.log('deleted', action)
     } catch (error) {
       setError(error)
     }
-    setShowPrompt(false)
+  }
+  const deletePick = () => {
+    setShowPrompt(true)
   }
   const handleCancelDelete = () => {
     setShowPrompt(false)
@@ -121,15 +115,25 @@ function Pick({pick}) {
   return (
     <>
       <div onClick={handleExpandClick}>
-        <div className="d-flex w-100 justify-content-between align-items-center">
-          <h5 className="mb-1">{pick?.pick_title}</h5>
-          <small>hace <ReactTimeAgo date={Date.parse(pick?.created_at)} timeStyle="twitter" /></small>
+      <div className="d-flex w-100 justify-content-between align-items-center mb-2">  
+        <div>
+        <h5 className="mb-0">{pick?.pick_title}</h5>
+         <div className="mb-1 align-items-center">
+            <span className="mr-1 text-muted">{pick?.stake}𝑢</span>
+            <span className="mr-1 text-dark">|</span>
+            <span className="mr-1 text-muted">${pick?.profit.toFixed(2)}</span>
+            {/* <small>hace <ReactTimeAgo date={Date.parse(pick?.created_at)} timeStyle="twitter" /></small> */}
+            </div>
+            <div className="align-items-center">
+            <span className="mr-1 text-dark badge">Cuota: {pick?.totalOdds}</span>
+            <span className="mr-1 ">|</span>
+            <span className="mr-1 text-dark badge">ROI: {(((pick?.profit.toFixed(2)/(pick?.stake*250)))*100).toFixed(2)}%</span>
+            {/* <small>hace <ReactTimeAgo date={Date.parse(pick?.created_at)} timeStyle="twitter" /></small> */}
+            </div>
         </div>
-        <div className="d-flex w-100 justify-content-between align-items-center">
-          <p className="mb-1 text-muted">{pick?.totalOdds}</p>
-          <span className={`badge rounded-pill ${getBadgeClass(pick?.status)}`}>
-            {getBadgeText(pick?.status)}
-          </span>
+            <span className={`badge ${getBadgeClass(pick?.status)}`}>
+              {getBadgeText(pick?.status)}
+            </span>
         </div>
         {isExpanded && (
           <div className="expanded-info">
@@ -139,12 +143,18 @@ function Pick({pick}) {
                 <div className="bet-item" key={bet._id}>
                   <div className="timeline"></div>
                   <div className="bet-content">
-                    <div className="d-flex w-100 justify-content-between align-items-center">
-                      <span>
-                        {bet.match.matchTitle} - ({bet.odds})
-                        <br />
+                    <div className="mb-1 d-flex justify-content-between align-items-center">
+                      <p className="w-75 mb-0">
+                        {bet.market}
+                      </p>
+                      <p className="mb-0 font-weight-bold">
+                        {(bet.odds > 0) ? `+${bet.odds}`: (bet.odds)}
+                      </p>
+                    </div>
+                    <div className="mb-1 d-flex justify-content-between align-items-center">
+                      <span className="w-75">
+                      {(bet.match.home_team && bet.match.away_team)? `${bet.match.home_team} vs ${bet.match.away_team}`: bet.match.matchTitle } - {dateConverter(bet.match.commence_time)}
                       </span>
-                      <p className="mb-1">{bet.market}</p>
                     </div>
                     <div className="d-flex w-100 justify-content-between align-items-center">
                       <span className="text-muted">
@@ -168,7 +178,7 @@ function Pick({pick}) {
 
               <Button
                 className="cutom-btn mx-1 btn-light btn-sm"
-                onClick={e => deletePick(pick)}
+                onClick={e => deletePick()}
               >
                 <FontAwesomeIcon icon={faTrash}>Borrar</FontAwesomeIcon>
 
@@ -208,7 +218,7 @@ function Pick({pick}) {
                 <option value="lost">Perdida</option>
                 <option value="void">Nulo</option>
                 <option value="pending">Pendiente</option>
-                <option value="cashback ">Reembolsada</option>
+                <option value="cashback">Reembolsada</option>
                 <option value="canceled">Cancelada</option>
                 <option value="half-won">Mitad ganada</option>
                 <option value="half-lost">Mitad perdida</option>

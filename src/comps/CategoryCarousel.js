@@ -28,6 +28,7 @@ const CategoryCarousel = ({ onCategorySelected }) => {
         {/* <span className="text-muted px-4 ">{`-`}</span> */}
         <InfiniteCarousel
     dots={false}
+    arrows={false}
     showSides={true}
     sidesOpacity={.5}
     sideSize={.1}

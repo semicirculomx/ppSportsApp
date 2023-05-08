@@ -48,7 +48,7 @@ export const addBestMatch = createAsyncThunk(
         try {
             let  {match}  = await request(url, { body, dispatch})
               if (match) {          
-                 return dispatch(matchesAdded([match]))
+                dispatch(matchesAdded([match]))
               }
         } catch (err) {
             console.log(err)

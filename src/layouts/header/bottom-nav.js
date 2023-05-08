@@ -6,21 +6,25 @@ import { faBell } from '@fortawesome/free-regular-svg-icons/faBell';
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons/faPlusCircle';
 import { faUser } from '@fortawesome/free-regular-svg-icons/faUser';
 import { NavLink, Link } from 'react-router-dom';
-import { Badge } from 'react-bootstrap';
+import { Badge, Button } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { selectUnread } from 'features/notify/notifySlice';
-import { faBars, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
+import StartPick from 'features/picks/picks-modal.js'
 import { faCalendarCheck, faCalendarTimes } from '@fortawesome/free-regular-svg-icons';
-import SidebarNav from 'layouts/header/sidebar_nav';
 
 function Nav() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [showPickModal, setShowPickModal] = useState(false)
   const notifsCount = useSelector(selectUnread).length;
   const {
     user: { screen_name },
   } = useSelector((state) => state.auth);
   const user_role = useSelector((state) => state.auth.user.role);
 
+
+  const handleModal = () => {
+    console.log('change bottom nav modal')
+    setShowPickModal((currentValue) => !currentValue);
+  }
   const list = [
     {
       name: 'Home',
@@ -53,7 +57,7 @@ function Nav() {
   const compose = {
     name: 'Post',
     icon: faPlusCircle,
-    href: '/empezar-pick',
+    onClick: handleModal,
     style: {
       right: '.5em',
       bottom: '4em',
@@ -65,13 +69,15 @@ function Nav() {
     <>
       <div className="fixed-bottom bg-color-dark d-flex justify-content-around">
      {(compose.name === 'Post' && user_role === 'tipster') &&
-          <Link
+          <Button
+          onClick={() => {
+            handleModal()
+          }}
           style={compose.style}
-          to={compose.href}
-          className="position-absolute"
+          className="position-absolute custom"
         >
           <FontAwesomeIcon className="" size="2x" icon={compose.icon} />
-        </Link>
+        </Button>
          }
         {list.map((item) => {
           const vis = item.disabled ? 'disabled' : '';
@@ -90,19 +96,20 @@ function Nav() {
             ) : null;
           return (
             <div key={item.name} className="d-flex align-items-top position-relative">
-              <NavLink
-                key={item.name}
-                to={item.href}
-                onClick={item.onClick}
-                activeClassName="active text-muted"
-                className={`${vis} text-light p-3`}
-              >
-                <FontAwesomeIcon icon={item.icon} size="lg" />
-              </NavLink>
-              {badge}
-            </div>
+            <NavLink
+              key={item.name}
+              to={item.href}
+              onClick={item.onClick}
+              activeClassName="active text-muted"
+              className={`${vis} text-light p-3`}
+            >
+              <FontAwesomeIcon icon={item.icon} size="lg" />
+            </NavLink>
+            {badge}
+          </div>
           );
         })}
+        <StartPick onClose={handleModal} show={showPickModal}/>
       </div>
     </>
   );

@@ -9,6 +9,7 @@ import { picksAdded, picksRemoved } from 'features/picks/picksSlice'
 
 import { parsePosts, populatePost } from './utils'
 import { parsePicks } from 'features/picks/utils'
+import { userAdded, usersAdded } from 'features/users/usersSlice'
 
 const postsAdapter = createEntityAdapter({
     selectId: post => post.id_str,
@@ -40,12 +41,12 @@ export const getFeed = createAsyncThunk('posts/getFeed', async (_, { dispatch, g
         let url = `/api/home_timeline?p=${p + 1}`
         let data = await request(url, { dispatch })
         let posts = data.posts || []
-        let picks = data.picks || []
+        // let picks = data.picks || []
         posts = posts.filter(Boolean).map(post => ({ ...post, is_feed_post: true }))
-        picks = picks.filter(Boolean).map(pick => ({ ...pick, is_feed_pick: true }))
-        console.log(posts, picks)
+        // picks = picks.filter(Boolean).map(pick => ({ ...pick, is_feed_pick: true }))
+        // console.log(posts, picks)
         dispatch(parsePosts(posts))
-        dispatch(picksAdded(picks));
+        // dispatch(picksAdded(picks));
         return posts.length
     } catch (err) {
         console.log(err)
@@ -104,41 +105,52 @@ export const composePost = createAsyncThunk(
     }
 )
 export const composePostAndPick = createAsyncThunk(
-    'posts/composePostAndPick',
-    async ({ body, url = '/api/post-pick' }, { dispatch }) => {
+    "posts/composePostAndPick",
+    async ({ body, url = "/api/post-pick" }, { dispatch }) => {
       try {
         const { post, pick } = await request(url, { body, dispatch });
-        console.log(post,pick)
-         if (post) {
-           const updatedPost = { ...post, user: { ...post.user, following: true } };
+  
+        if (post) {
+          const updatedPost = {
+            ...post,
+            user: { ...post.user, following: true },
+          };
+
+          // Dispatch postsAdded when post is present
           dispatch(parsePosts([updatedPost]));
-         } 
-         if (pick) {
-           dispatch(picksAdded([pick]));
-        } 
-      
+  
+          // Dispatch picksAdded when post has an assigned pick
+          if (pick) {
+            dispatch(picksAdded([pick]));
+          }
+
+        } else if (pick) {
+          dispatch(parsePicks([pick]));
+  
+        }
       } catch (error) {
         console.error(error);
-        throw new Error('Failed to create post and pick');
+        throw new Error("Failed to create post and pick");
       }
     }
   );
-
 // Define an async thunk to remove a post
 export const removePost = createAsyncThunk(
     'posts/removePost',
     async (postId, { dispatch }) => {
           try {
             // Send a request to remove the post from the API
-            let { post,pick } = await request(`/api/posts/${postId}`, {dispatch, method: 'DELETE'})
-
-            if (post){
+            let res = await request(`/api/post/${postId}`, {dispatch, method: 'DELETE'})
+            console.log(res)
+            if (res.post){
                 // Dispatch the reducer to remove the post from the store
-                 dispatch(postsRemoved([post.id_str]))
-            }  //work around till server shows this correctly on all posts/users
-            if(pick) {
-                dispatch(picksRemoved([pick.id_str]))
+                dispatch(postsRemoved([res.post.id_str]))
+            } 
+            if(res.pick) {
+                dispatch(picksRemoved([res.pick.id_str]))
             }
+            console.log(res.post.user)
+            dispatch(userAdded(res.post.user))
         } catch (err) {
             console.log(err)
             throw err

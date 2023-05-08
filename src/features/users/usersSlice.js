@@ -5,6 +5,7 @@ import {
     createSelector,
 } from '@reduxjs/toolkit'
 import { request } from 'api'
+import { selectUserPicks } from 'features/picks/picksSlice'
 import { parsePicks } from 'features/picks/utils'
 import { getFeed, selectUserPosts } from 'features/posts/postsSlice'
 import { parsePosts } from 'features/posts/utils'
@@ -27,8 +28,11 @@ const usersAdapter = createEntityAdapter({
 const initialState = usersAdapter.getInitialState({
     user_suggests_status: 'idle',
     user_timeline_status: 'idle',
+    user_posts_status: 'idle',
+    user_picks_status: 'idle',
     user_timeline_page: 0,
     user_picks_page: 0,
+    user_posts_page: 0,
 
     user_update_status: 'idle',
 
@@ -66,20 +70,54 @@ export const getUserTimeline = createAsyncThunk(
     'users/getUserTimeline',
     async (username, { dispatch, getState }) => {
         let { user_timeline_page: p } = getState().users
-        let l = selectUserPosts(getState(), username).length
-        if (!l || l === 0) {
-            dispatch(resetTimelinePage())
+
+        let url = `/api/user_timeline/${username}?p=${p + 1}`
+        let { user } = await request(url, { dispatch })
+        if (user) {
+            dispatch(userAdded(user))
+        }
+            }
+)
+
+export const getUserPicks = createAsyncThunk(
+    'users/getUserPicks',
+    async (username, { dispatch, getState }) => {
+        let { user_picks_page: p } = getState().users
+        let picksLength = selectUserPicks(getState(), username).length
+        if (!picksLength || picksLength === 0) {
+            dispatch(resetPicksPage())
             p = 0
         }
-        let url = `/api/user_timeline/${username}?p=${p + 1}`
-        let { posts, user, picks } = await request(url, { dispatch })
-        if (user) {
+        console.log(p, getState().users.user_picks_page, p+1)
+        let url = `/api/user_picks/${username}?p=${p + 1}`
+        let { user, picks } = await request(url, { dispatch })
+        if (user && !picks.length) {
             dispatch(userAdded(user))
         }
         if(picks) {
             dispatch(parsePicks(picks))
+        }        
+        return picks.length
+    }
+)
+
+export const getUserPosts = createAsyncThunk(
+    'users/getUsersPosts',
+    async (username, { dispatch, getState }) => {
+        let { user_posts_page: p } = getState().users
+        let postsLength = selectUserPosts(getState(), username).length
+        if (!postsLength || postsLength === 0) {
+            dispatch(resetPostsPage())
+            p = 0
         }
-        dispatch(parsePosts(posts))
+        console.log(p, getState().users.user_picks_page, p+1)
+        let url = `/api/user_posts/${username}?p=${p + 1}`
+        let { posts, user } = await request(url, { dispatch })
+        if (user && !posts.length) {
+            dispatch(userAdded(user))
+        }
+        if(posts) dispatch(parsePosts(posts))
+        
         return posts.length
     }
 )
@@ -212,7 +250,10 @@ const usersSlice = createSlice({
             state.user_timeline_page = 0
         },
         resetPicksPage: state => {
-            state.user_timeline_page = 0
+            state.user_picks_page = 0
+        }, 
+        resetPostsPage: state => {
+            state.user_posts_page = 0
         },
         resetFollowerlistPage: state => {
             state.user_followerlist_page = 0
@@ -249,11 +290,33 @@ const usersSlice = createSlice({
             state.user_timeline_status = 'loading'
         },
         [getUserTimeline.fulfilled]: (state, action) => {
+            state.user_timeline_status = 'done'
+        },
+        [getUserPicks.rejected]: state => {
+            state.user_picks_status = 'error'
+        },
+        [getUserPicks.pending]: state => {
+            state.user_picks_status = 'loading'
+        },
+        [getUserPicks.fulfilled]: (state, action) => {
             let length = action.payload
             if (length > 0) {
-                state.user_timeline_status = 'idle'
-                state.user_timeline_page += 1
-            } else state.user_timeline_status = 'done'
+                state.user_picks_status = 'idle'
+                state.user_picks_page += 1
+            } else state.user_picks_status = 'done'
+        },
+        [getUserPosts.rejected]: state => {
+            state.user_posts_status = 'error'
+        },
+        [getUserPosts.pending]: state => {
+            state.user_posts_status = 'loading'
+        },
+        [getUserPosts.fulfilled]: (state, action) => {
+            let length = action.payload
+            if (length > 0) {
+                state.user_posts_status = 'idle'
+                state.user_posts_page += 1
+            } else state.user_posts_status = 'done'
         },
         [updateUserDetails.rejected]: state => {
             state.user_update_status = 'error'
@@ -328,6 +391,8 @@ export const {
     userAdded,
     usersAdded,
     resetTimelinePage,
+    resetPicksPage,
+    resetPostsPage,
     resetFollowerlistPage,
     resetFriendlistPage,
     usersAddedDontUpdate,

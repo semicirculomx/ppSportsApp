@@ -8,6 +8,7 @@ import { request } from 'api'
 import { postsRemoved } from 'features/posts/postsSlice'
 
 import { parsePicks, populatePick } from './utils'
+import { userAdded, usersAdded } from 'features/users/usersSlice'
 
 const picksAdapter = createEntityAdapter({
     selectId: pick => pick.id_str,
@@ -113,7 +114,7 @@ export const getPicksFeed = createAsyncThunk('picks/getPicksFeed', async (_, { d
         let url = `/api/picks?p=${p + 1}`
         let data = await request(url, { dispatch })
         let picks = data || []
-        dispatch(picksAdded(data))
+        dispatch(parsePicks(data))
         return picks.length
     } catch (err) {
         console.log(err)
@@ -139,23 +140,25 @@ export const composePick = createAsyncThunk(
 export const removePick = createAsyncThunk(
     'picks/removePick',
     async (pickId, { dispatch }) => {
-        try {
+          try {
             // Send a request to remove the post from the API
-            let { post,pick } = await request(`/api/pick/${pickId}`, {dispatch, method: 'DELETE'})
-            console.log(post,pick)
-            if (post){
-                // Dispatch the reducer to remove the post from the store
-                 dispatch(postsRemoved([post.id_str]))
-            }  //work around till server shows this correctly on all posts/users
-            if(pick) {
-                dispatch(picksRemoved([pick.id_str]))
+            let res = await request(`/api/pick/${pickId}`, {dispatch, method: 'DELETE'})
+            if(res.pick) {
+                dispatch(picksRemoved([res.pick.id_str]))
             }
+
+            if (res.post){
+                // Dispatch the reducer to remove the post from the store
+                dispatch(postsRemoved([res.post.id_str]))
+            } 
+            console.log(res.pick.user)
+            dispatch(userAdded(res.pick.user))
         } catch (err) {
             console.log(err)
             throw err
         }
     }
-);
+  );
 
 export const updatePick = createAsyncThunk(
     'picks/updatePick',
@@ -164,7 +167,7 @@ export const updatePick = createAsyncThunk(
            let { pick } = await request(`/api/pick/${body._id}`, { body, dispatch, method: 'PUT' })
             
            if (pick){
-             return dispatch(pickStatusUpdated(pick))
+             return dispatch(parsePicks([pick]))
         }
         } catch (err) {
             console.log(err)
@@ -216,15 +219,6 @@ const picksSlice = createSlice({
         },
         [composePick.fulfilled]: state => {
             state.compose_status = 'idle'
-        },
-        [removePick.pending]: state => {
-            state.remove_status = 'pending'
-        },
-        [removePick.rejected]: state => {
-            state.remove_status = 'error'
-        },
-        [removePick.fulfilled]: state => {
-            state.remove_status = 'idle'
         },
         [updatePick.pending]: state => {
             state.update_status = 'pending'
@@ -283,9 +277,17 @@ const picksSlice = createSlice({
                 console.log(data)
                 state.api_match_status = 'done'
                 state.apiMatch = data
-                
             }
-        }
+        },
+        [removePick.rejected]: state => {
+            state.remove_status = 'error'
+        },
+        [removePick.pending]: state => {
+            state.remove_status = 'loading'
+        },
+        [removePick.fulfilled]: (state, action) => {
+           state.remove_status = 'done'
+        },
     },
 })
 const { reducer, actions } = picksSlice
@@ -314,6 +316,7 @@ export const picksSelectors = picksAdapter.getSelectors(state => state.picks)
 export const selectAllPicks = state => {
     return picksSelectors
         .selectAll(state)
+        .map(pick => populatePick(pick, state))
         .filter(Boolean)
 }
 
@@ -341,7 +344,8 @@ export const selectUserPicks = createSelector(
     [selectAllPicks, (state, username) => username],
     (picks, username) =>
         picks.filter(
-            pick =>
-                pick.user.screen_name === username
+            (pick) => {
+                return pick.user.screen_name === username
+            }
         )
 )

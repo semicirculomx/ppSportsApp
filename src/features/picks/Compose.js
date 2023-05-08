@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState, useRef } from 'react'
 import { Modal, Media, Alert, ProgressBar, Form, Row, Col, InputGroup, Button } from 'react-bootstrap'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { Typeahead } from 'react-bootstrap-typeahead'
 
 import 'react-bootstrap-typeahead/css/Typeahead.css'
@@ -19,13 +19,11 @@ import Slip from 'comps/Slip'
 
 import { addBestMatch } from 'features/best-matches/bmSlice'
 
-import 'emoji-mart/css/emoji-mart.css'
 import DOMPurify from 'dompurify'
 import { filterInput, dateConverter, findLongestMarketsArray } from 'utils/helpers'
 
 export default props => {
     let location = useLocation()
-    let history = useHistory()
     let dispatch = useDispatch()
 
     let { user } = useSelector(state => state.auth)
@@ -38,7 +36,6 @@ export default props => {
     let type = props.type
     const betMarkets = ["Ganador", "Hándicap", "Total O/U", "Hándicap G", "Doble O", "BTTS", "Margen V", "1er tiempo", "Especiales", "Largo pl.", "Parlay", "En vivo", "Desc/Final", "1er anot.", "Tarjetas", "Posesión", "Esquina", "D.N.B.", "Exacto", "Intervalo"]
     let { compose_status: status } = useSelector(state => state.posts)
-    let userBank = user.bank
     let ta = useRef(null)
     let unidad = useRef(250);
     let input_ref = useRef()
@@ -60,7 +57,7 @@ export default props => {
     let [initialContent, setInitialContent] = useState('Escribe aquí tus análisis y predicciones...')
     let [placeholder, setPlaceholder] = useState(true)
     let [bookmaker, setBookmaker] = useState(null)
-    let [post_categories, setCategory] = useState([])
+    let [showModal, setShowModal] = useState(props.show)
 
     let [progress, setProgress] = useState(0)
 
@@ -68,7 +65,7 @@ export default props => {
     const [totalPayout, setTotalPayout] = useState(0);
 
     function calculatePayout(bets, stake) {
-        if(!bets.length) 
+        if (!bets.length)
             return { totalOdds: 0, payout: 0 };
         // Convert stake to a float
         stake = parseFloat(stake);
@@ -101,13 +98,14 @@ export default props => {
             setTimeout(() => { setProgress(90) }, 200)
         return true
     }
+
     const handleClose = () => {
-        console.log(status)
         if (status !== 'error' || true) {
             setError(null)
-            history.goBack()
+            props.onClose()
         }
     }
+
     const resizeTa = () => {
         if (ta.current) {
             // let height = ta.current.scrollHeight;
@@ -131,12 +129,10 @@ export default props => {
         }
     }, [apiStatus, apiSports, dispatch])
 
-    const handleChange = e => {
-        resizeTa()
-        let text = e.target.value
-        setText(text)
-        setActive(DOMPurify.sanitize(text, { ALLOWED_TAGS: [] }).trim().length > 0)
-    }
+    useEffect(() => {
+     setShowModal(props.show)
+    }, [props.show])
+
 
     /* Handle selected sport */
     const handleSelectSport = (selectedSport) => {
@@ -212,7 +208,7 @@ export default props => {
             setMatch(null)
             setSport(null)
             setBookmaker(null)
-            
+
 
             const { totalOdds, payout, payoutNumber } = calculatePayout([...bets, bet], (stake * unidad.current));
 
@@ -245,59 +241,67 @@ export default props => {
             post: {},
             pick: {}
         };
-
-        if (editor_text && !placeholder) {
-            let text;
-            let htmlSanitized;
-            try {
-                htmlSanitized = filterInput(htmlContent, 'html_strict', { max_length: 60000, identifier: 'Post' });
-                text = filterInput(editor_text, 'text', { max_length: 60000, identifier: 'Post' });
-            } catch (err) {
-                setActive(true);
-                return setError(err.message);
-            }
-            body.post = {
-                text,
-                post_title: pick_title,
-                base64Images,
-                htmlContent: htmlSanitized,
-                post_categories: []
-            };
-        }
-
-        if (bets.length > 0) {
-            let pick = {
-                bets,
-                stake,
-                pick_title,
-                profit,
-                lastUserBank: user.bank,
-                totalOdds,
-            };
-            body.pick = pick;
-            if(body.post.text) {
-                body.post.post_categories = bets.map((e) => e.match.sport)
-            }
-        } else {
-            body.post.post_categories = [sport.group ? sport.group : sport.label]
-            body.post.bets = [{
-                match: {
-                home_team: match.home_team ? match.home_team : undefined,
-                away_team: match.away_team ? match.away_team : undefined,
-                commence_time: match.commence_time ? match.commence_time : undefined,
-                sport: sport.group ? sport.group : sport.label,
-                competition: match.sport_title ? match.sport_title : sport.title,
-                match_id: !match.customOption ? match.id : `custom-${matchTitle}-${Date.now()}`,
-                customOption: match.customOption ? match.customOption : false,
-                bookmaker: bookmaker ? bookmaker : null,     
+        try {
+            if (editor_text && !placeholder) {
+                let text;
+                let htmlSanitized;
+                try {
+                    htmlSanitized = filterInput(htmlContent, 'html_strict', { max_length: 60000, identifier: 'Post' });
+                    text = filterInput(editor_text, 'text', { max_length: 60000, identifier: 'Post' });
+                } catch (err) {
+                    setActive(true);
+                    return setError(err.message);
                 }
-            }]
+                body.post = {
+                    text,
+                    post_title: pick_title,
+                    base64Images,
+                    htmlContent: htmlSanitized,
+                    post_categories: []
+                };
+            }
+
+            if (bets.length > 0) {
+                let pick = {
+                    bets,
+                    stake,
+                    pick_title,
+                    profit,
+                    lastUserBank: user.bank,
+                    totalOdds,
+                };
+                body.pick = pick;
+                if (body.post.text) {
+                    body.post.post_categories = bets.map((e) => e.match.sport)
+                }
+            } else {
+                body.post.post_categories = [sport.group ? sport.group : sport.label]
+                body.post.bets = [{
+                    match: {
+                        home_team: match.home_team ? match.home_team : undefined,
+                        away_team: match.away_team ? match.away_team : undefined,
+                        commence_time: match.commence_time ? match.commence_time : undefined,
+                        sport: sport.group ? sport.group : sport.label,
+                        competition: match.sport_title ? match.sport_title : sport.title,
+                        match_id: !match.customOption ? match.id : `custom-${matchTitle}-${Date.now()}`,
+                        customOption: match.customOption ? match.customOption : false,
+                        bookmaker: bookmaker ? bookmaker : null,
+                        matchTitle,
+                    }
+                }]
+            }
+            console.log(body)
+            let action = await dispatch(composePostAndPick({ body }))
+
+            if (action.type === 'posts/composePostAndPick/fulfilled') {
+                setActive(true);
+                handleClose()
+            }
+        } catch (error) {
+            console.log(error)
+            setError(error.message)
         }
 
-        console.log(body);
-        let action = await dispatch(composePostAndPick({ body }))
-        setActive(true);
-        if (action.type === 'posts/composePostAndPick/fulfilled') handleClose();
     }
 
     /* Handle submit best match */
@@ -324,8 +328,10 @@ export default props => {
             match: matchBody,
         }
         let action = await dispatch(addBestMatch({ body }))
-        setActive(true)
-        if (action.type === 'bm/addBestMatch/fulfilled') handleClose()
+        if (action.type === 'bm/addBestMatch/fulfilled') {
+            setActive(true)
+            handleClose()
+        }
 
     }
 
@@ -335,7 +341,7 @@ export default props => {
                 className="p-0"
                 size="lg"
                 scrollable={true}
-                show={true}
+                show={showModal}
                 onHide={handleClose}
                 backdrop="static"
                 keyboard={false}
@@ -347,7 +353,7 @@ export default props => {
                         </small>
                     </Modal.Title>
                 </Modal.Header>
-                {status === 'pending' && dirtyProgress() && (
+                {status === 'pending' && (
                     <ProgressBar className="rounded-0" now={progress} />
                 )}
                 {status === 'error' && (
@@ -372,55 +378,56 @@ export default props => {
                                                 type="text"
                                                 value={pick_title}
                                                 onChange={n => setPickTitle(n.target.value)}
-                                                required/>
+                                                required />
                                         </Form.Group>
                                     </>
                                 )}
 
-                                        {apiSports.length > 0 && (
-                                            <Form.Group controlId="sport">
-                                                <Typeahead
-                                                    clearButton
-                                                    allowNew={true}
-                                                    newSelectionPrefix="No está? Agrega uno..😁: "
-                                                    id="sport-typeahead"
-                                                    onChange={handleSelectSport}
-                                                    labelKey={(option) => `${option.title} - ${option.group}`}
-                                                    options={apiSports}
-                                                    placeholder="Elige un deporte..."
-                                                    selected={sport ? [sport] : []}
-                                                />
-                                            </Form.Group>
-                                        )}
+                                {apiSports.length > 0 && (
+                                    <Form.Group controlId="sport">
+                                        <Typeahead
+                                            clearButton
+                                            allowNew={true}
+                                            newSelectionPrefix="No está? Agrega uno..😁: "
+                                            id="sport-typeahead"
+                                            onChange={handleSelectSport}
+                                            labelKey={(option) => `${option.title} - ${option.group}`}
+                                            options={apiSports}
+                                            placeholder="Elige un deporte..."
+                                            selected={sport ? [sport] : []}
+                                        />
+                                    </Form.Group>
+                                )}
 
-                                        {sport && (
-                                            <Form.Group controlId="match">
-                                                <Typeahead
-                                                    clearButton
-                                                    allowNew={true}
-                                                    newSelectionPrefix="No está? Agrega uno..😁: "
-                                                    id="match-typeahead"
-                                                    onChange={handleSelectMatch}
-                                                    labelKey={(option) => `${option.home_team} - ${option.away_team} | ${dateConverter(option.commence_time)}`}
-                                                    options={leagueMatches}
-                                                    placeholder="Selecciona un partido..."
-                                                    selected={match ? [match] : []}
-                                                />
-                                            </Form.Group>
-                                        )}
-                                        <hr />
-                                        {type !== 'analisis' && (
+                                {sport && (
+                                    <Form.Group controlId="match">
+                                        <Typeahead
+                                            clearButton
+                                            allowNew={true}
+                                            newSelectionPrefix="No está? Agrega uno..😁: "
+                                            id="match-typeahead"
+                                            onChange={handleSelectMatch}
+                                            labelKey={(option) => `${option.home_team} - ${option.away_team} | ${dateConverter(option.commence_time)}`}
+                                            options={leagueMatches}
+                                            placeholder="Selecciona un partido..."
+                                            selected={match ? [match] : []}
+                                        />
+                                    </Form.Group>
+                                )}
+                                {match && (
+                                     <Form.Group controlId="matchTitle">
+                                     <Form.Control
+                                         placeholder="Título de apuesta"
+                                         type="text"
+                                         value={matchTitle}
+                                         onChange={(e) => setMatchTitle(e.target.value)} />
+                                 </Form.Group>
+                                )}
+                                <hr />
+                                {type !== 'analisis' && (
                                     <>
                                         {type === 'apuesta' && (
                                             <>
-                                                <Form.Group controlId="matchTitle">
-                                                    <Form.Control
-                                                        placeholder="Título de apuesta"
-                                                        type="text"
-                                                        value={matchTitle}
-                                                        onChange={(e) => setMatchTitle(e.target.value)} />
-                                                </Form.Group>
-
                                                 <Form.Group controlId="market">
                                                     <Typeahead
                                                         clearButton
@@ -465,10 +472,10 @@ export default props => {
                                                     <InputGroup.Text className="font-weight-bold">{totalPayout}</InputGroup.Text>
                                                 </InputGroup>
                                                 <div className="custom-btn">
-                                                    <Button 
-                                                    className="font-weight-bold btn w-100 mb-3" 
-                                                    onClick={addBetMatch}
-                                                    disabled={!market || !odds || !stake || !matchTitle}
+                                                    <Button
+                                                        className="font-weight-bold btn w-100 mb-3"
+                                                        onClick={addBetMatch}
+                                                        disabled={!market || !odds || !stake || !matchTitle}
                                                     >Agregar</Button>
                                                 </div>
 
@@ -480,11 +487,11 @@ export default props => {
                                 {type !== 'partido' && (
                                     <>
                                         <Form.Group className="w-100 p-0" controlId="analisis">
-                                        <TextEditor style={{
-                                                    height
-                                                }} onContentChange={handleEditorContentChange}
-                                                
-                                                content={initialContent}/> 
+                                            <TextEditor style={{
+                                                height
+                                            }} onContentChange={handleEditorContentChange}
+
+                                                content={initialContent} />
 
                                         </Form.Group>
                                     </>

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useCallback, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
@@ -7,10 +7,11 @@ import {
     followUser,
     unFollowUser,
     //selectUserPosts,
-    getUserTimeline
+    getUserTimeline,
+    getUserPicks,
+    getUserPosts
 } from './usersSlice'
 import { selectUserPosts } from 'features/posts/postsSlice'
-import { getPicksFeed, selectFeedPicks } from 'features/picks/picksSlice'
 
 // import Spinner from 'comps/Spinner'
 import PicksList from 'comps/PicksList'
@@ -19,7 +20,7 @@ import Heading from 'comps/Heading'
 import FollowButton from 'comps/FollowButton'
 import { Row, Figure, Col, Tabs, Tab } from 'react-bootstrap'
 import ScrollToTop from 'comps/ScrollToTop'
-import { numFormatter } from 'utils/helpers'
+import { currencyFormat, numFormatter } from 'utils/helpers'
 import Spinner from 'comps/Spinner'
 import WithUrls from 'comps/with-urls'
 
@@ -27,9 +28,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLocationArrow as faLocation } from '@fortawesome/free-solid-svg-icons/faLocationArrow'
 import { faCalendarAlt as faDate } from '@fortawesome/free-solid-svg-icons/faCalendarAlt'
 import { faLink } from '@fortawesome/free-solid-svg-icons/faLink'
-import { faMoneyBill } from '@fortawesome/free-solid-svg-icons/faMoneyBill'
-import { faCheckCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons'
+import { faTrophy, faWallet, faWindowClose } from '@fortawesome/free-solid-svg-icons'
 import { selectUserPicks } from 'features/picks/picksSlice'
+import { faTelegramPlane } from '@fortawesome/free-brands-svg-icons'
+
 
 
 export default props => {
@@ -39,6 +41,8 @@ export default props => {
     let { user: authUser } = useSelector(state => state.auth)
     let posts = useSelector(state => selectUserPosts(state, user && user.screen_name))
     let { user_timeline_status: status } = useSelector(state => state.users)
+    let { user_posts_status: posts_status } = useSelector(state => state.users)
+    let { user_picks_status: picks_status } = useSelector(state => state.users)
     let picks = useSelector(state => selectUserPicks(state, user && user.screen_name))
     const [activeTab, setActiveTab] = useState('posts');
 
@@ -46,33 +50,41 @@ export default props => {
         setActiveTab(key);
     };
 
-
     let getPosts = useCallback(() => {
-        dispatch(getUserTimeline(username))
+        dispatch(getUserPosts(username))
         // eslint-disable-next-line
     }, [username])
+    
+    let getPicks = useCallback(() => {
+        dispatch(getUserPicks(username))
+            // eslint-disable-next-line
+    }, [username])
 
+    useEffect(() => {
+         if(status === 'idle') {
+            dispatch(getUserTimeline(username))
+         }
+        // eslint-disable-next-line
+    }, [])
 
     if (status === 'loading' && !user)
         return <Spinner />
     let userFeed = (<>
         <Tabs className="custom-tabs" activeKey={activeTab} onSelect={handleSelect}>
-       <Tab eventKey="posts" title={`Picks ${picks.length}`}>
-                
-                 <PicksList
-                   
-                    status={status}
-                    getFeedPicks={getPosts}
-                    picks={picks}
-                /> 
-            </Tab>
-            <Tab eventKey="picks" title={`Análisis ${posts.length}`}>
+            <Tab eventKey="posts" title={`Análisis`}>
                 <PostsList
                     no_carousel
-                    status={status}
+                    status={posts_status}
                     getPosts={getPosts}
                     posts={posts}
                 />
+            </Tab>
+            <Tab eventKey="picks" title={`Picks`}>
+                 <PicksList
+                    status={picks_status}
+                    getPicks={getPicks}
+                    picks={picks}
+                /> 
             </Tab>
         </Tabs>
     </>)
@@ -125,8 +137,37 @@ export default props => {
                 <blockquote style={{ maxHeight: '300px' }} className="my-3 overflow-y-auto">
                     <WithUrls>{user.description}</WithUrls>
                     </blockquote>
+                    <Row className="d-flex justify-content-between">
+                    <Col xs="6" lg="4" className="mb-1">
+                        <div className="d-flex text-muted">
+                            <FontAwesomeIcon className="mt-1" icon={faWallet} style={{ fontSize: '1em' }} />
+                            <span className="ml-1">Bank: {currencyFormat(user.totalBank)}</span>
+                        </div>
+                    </Col>
+                </Row>
                 <Row className="d-flex justify-content-between">
-                    {/* {user.location && (
+                    <Col xs="6" lg="4" className="mb-1">
+                        <div className="d-flex text-muted align-items-top">
+                            <FontAwesomeIcon className="mt-1" icon={faTrophy} style={{ fontSize: '1em' }} />
+                            <span className="ml-1">Ganadas: {user.won_bets}</span>                     
+                        </div>
+                    </Col>
+                </Row>                
+                <Row className="d-flex justify-content-between">
+                    <Col xs="6" lg="4" className="mb-1">
+                        <div className="d-flex text-muted align-items-top">
+                            <FontAwesomeIcon className="mt-1" icon={faWindowClose} style={{ fontSize: '1em' }} />
+                            <span className="ml-1">Perdidas: {user.lost_bets}</span>
+                        </div>
+                    </Col>
+                </Row>
+                <Row className="d-flex mb-1 justify-content-between w-100">
+                <div className="d-flex text-muted align-items-top">
+                            <FontAwesomeIcon className="mt-1 mr-1" icon={faTelegramPlane} style={{ fontSize: '1em' }} />
+                            <WithUrls>{expanded_url || url}</WithUrls>
+                            {/* <a className="d-block text-truncate ml-1" target="_blank" rel="noopener noreferrer" href={expanded_url || url}>{display_url || url || expanded_url || 'Just here'}</a> */}
+                        </div>
+                        {user.location && (
                         <Col sm="6" lg="4" className="mb-1">
                             <div className="d-flex text-muted align-items-top">
                                 <FontAwesomeIcon className="mt-1" icon={faLocation} style={{ fontSize: '1em' }} />
@@ -135,45 +176,19 @@ export default props => {
 
                             </div>
                         </Col>
-                    )} */}
-                    <Col sm="6" lg="4" className="mb-1">
-                        <div className="d-flex text-muted align-items-top">
-                            <FontAwesomeIcon className="mt-1" icon={faMoneyBill} style={{ fontSize: '1em' }} />
-                            <span className="ml-1">Bank: {user.bank}</span>
-                        </div>
-                    </Col>
-                    <Col sm="6" lg="4" className="mb-1">
-                        <div className="d-flex text-muted align-items-top">
-                            <FontAwesomeIcon className="mt-1" icon={faCheckCircle} style={{ fontSize: '1em' }} />
-                            <span className="ml-1">Perdidas: {picks.length}</span>                        </div>
-                    </Col>
-                    <Col sm="6" lg="4" className="mb-1">
-                        <div className="d-flex text-muted align-items-top">
-                            <FontAwesomeIcon className="mt-1" icon={faTimesCircle} style={{ fontSize: '1em' }} />
-                            <span className="ml-1">Ganadas: {picks.length}</span>
-                        </div>
-                    </Col>
-                    {(expanded_url || url)  && (
-                    <Col sm="6" lg="4" className=" mb-1">
-                        <div className="d-flex text-muted align-items-top">
-                            <FontAwesomeIcon className="mt-1 mr-1" icon={faLink} style={{ fontSize: '1em' }} />
-                            <WithUrls>{expanded_url || url}</WithUrls>
-                            {/* <a className="d-block text-truncate ml-1" target="_blank" rel="noopener noreferrer" href={expanded_url || url}>{display_url || url || expanded_url || 'Just here'}</a> */}
-                        </div>
-                    </Col>
                     )}
                 </Row>
-                <Row className="d-flex my-2 justify-content-between w-100">
+                <Row className="d-flex mx-auto my-2 text-center justify-content-between align-items-center w-100">
                     { user.role === 'tipster' &&  <Link
                         to={`/user/${user.screen_name}/followers`}
                         className="text-muted mr-2"
-                    >{numFormatter(user.followers_count)} <span>Seguidores</span></Link> }
-
-                    <Link
+                    > <span className='font-weight-bold'>{numFormatter(user.followers_count)}</span> Seguidores</Link>
+                     }
+                                       <Link
                         to={`/user/${user.screen_name}/friends`}
                         className="text-muted mr-2"
-                    >{numFormatter(user.friends_count)} <span>Siguiendo</span></Link>
-                </Row>
+                    ><span className='font-weight-bold'>{numFormatter(user.friends_count)}</span> Siguiendo</Link>
+                </Row>             
             </div>
         </>)
     }

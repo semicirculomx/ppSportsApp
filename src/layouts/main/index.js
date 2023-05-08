@@ -13,7 +13,6 @@ import Compose from 'features/posts/compose-modal'
 import Notifies from 'features/notify/notify-page'
 import Settings from 'features/settings/settings-page.js'
 import bestMatches from 'features/best-matches/bestMatches'
-import startPick from 'features/picks/picks-modal.js'
 import MatchDetails from 'features/best-matches/matchDetails'
 
 
@@ -32,7 +31,6 @@ import TextEditor from 'comps/TextEditor'
 
 export default props => {
     const { ensureCompleteProfile } = useAlerts()
-    const user = useSelector(state => state.auth.user)
     const dispatch = useDispatch()
     useEffect(() => {
         ensureCompleteProfile()
@@ -40,9 +38,10 @@ export default props => {
     }, [])
     return (
         <Row>
-            <Col className="px-sm-4" sm="12" lg="8">
+            <Col className="" sm="12" lg="12">
                 <Col>
                     <Switch>
+
                         <Route path='/explore' component={Explore} />
                         <Route path='/search' component={Search} />
 
@@ -65,16 +64,15 @@ export default props => {
                         <Route path='/chats' component={ChatRoom} />
 
                         <Route path='/' component={Home} />
-                    </Switch>
-                    {user.role === 'tipster' && <Route path='/empezar-pick' component={startPick} />}                    
+                    </Switch>           
                 </Col>
             </Col>
 
-            <MediaQuery minWidth={992}>
+            {/* <MediaQuery minWidth={992}>
                 <Col lg="4" className="vh-100 overflow-y-auto hide-scroll sticky-top">
                     <Sidebar />
                 </Col>
-            </MediaQuery>
+            </MediaQuery> */}
         </Row>
     )
 }

@@ -270,6 +270,30 @@ a+span.badge {
 }
 
 .pick-card {
+  .bg-pending {
+    background-color: rgb(135, 135, 135);
+  }
+  .bg-cashback {
+    background-color: rgb(135, 135, 135);
+  }
+  .bg-canceled {
+    background-color: rgb(135, 135, 135);
+  }
+  .bg-half-won {
+    background: linear-gradient(280deg, rgba(84,137,77,1) 50%, rgba(251,2,39,1) 100%);
+  }
+  .bg-half-lost {
+    background: linear-gradient(280deg, rgba(251,2,39,1) 0%, rgba(84,137,77,1) 100%);
+  }
+  .bg-void {
+    background-color: rgb(135, 135, 135);
+  }
+  .bg-won {
+    background-color: green;
+  }
+  .bg-lost {
+    background-color: $primary;
+  }
   .list-group {
     max-width: 600px;
     margin: 0 auto;
@@ -337,12 +361,12 @@ a+span.badge {
     }
 
     h5 {
-      font-size: 14px;
+      font-size: 16px;
       margin-bottom: 10px;
     }
 
     small {
-      font-size: 10px;
+      font-size: 12px;
     }
 
     p {
@@ -353,10 +377,11 @@ a+span.badge {
 
     span.badge {
       color: #fff;
-      font-size: 10px;
-      border: 0.5px solid black;
-      padding: 4px;
-      box-shadow: 3px 1px 0px 0px #000;
+      font-size: 12px;
+      border: 1px solid black;
+      padding: 4px 8px;
+      box-shadow: 0px 1px 0px 0px #000;
+      border-radius: 3px;
     }
 
     ul {
@@ -388,7 +413,7 @@ a+span.badge {
     position: absolute;
     left: 20px;
     top: 10px;
-    bottom: calc(35% - 10px);
+    bottom: 12px;
     width: 3px;
     border-radius: 2px;
     background-color: #ccc;
@@ -422,6 +447,12 @@ a+span.badge {
 }
 
 .post-card {
+    margin: auto !important;
+    .list-group-item-action:hover, .list-group-item-action:focus {
+      z-index: 1;
+      text-decoration: none;
+      background-color: #ffffff00;
+  }
   .list-group-item {
     border: none;
     border-radius: 7px;

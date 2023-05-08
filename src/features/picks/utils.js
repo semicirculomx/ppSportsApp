@@ -6,18 +6,40 @@ import {
 
 import { picksAdded } from './picksSlice'
 
-export const populatePick = (pick, state) => ({
-    ...pick,
-    user: usersSelectors.selectById(state, pick.user) || pick.backup_user,
-    retweeted_by: (pick.retweeted_by && usersSelectors.selectById(state, pick.retweeted_by)) || pick.backup_retweeted_by,
-    quoted_status: (pick.quoted_status && populatePick(pick.quoted_status, state))
-})
+export const populatePick = (pick, state) => {
+   return {
+   ...pick,
+    user: usersSelectors.selectById(state, pick.user.screen_name),
+   }
+}
 
-export const parsePicks = (picks, { dont_dispatch_posts = false, dont_update_users = false } = {}) => dispatch => {
+export const parsePicks = (picks, { dont_dispatch_picks = false, dont_update_users = false } = {}) => dispatch => {
     try {
+        picks = picks.filter(Boolean)
+        if (!picks.length)
+            return
+        let users = picks.map(pick => pick.user).filter(Boolean)
 
-        if (!dont_dispatch_posts)
+        picks = picks.map(pick => ({
+            ...pick,
+            user: {
+                _id: pick.user._id,
+                id: pick.user.id,
+                id_str: pick.user.id_str,
+                screen_name: pick.user.screen_name,
+                role: pick.user.role,
+                won_bets: pick.user.won_bets,
+                lost_bets: pick.user.lost_bets,               
+            }
+        }))
+
+        if (!dont_dispatch_picks)
             dispatch(picksAdded(picks))
+        if (dont_update_users)
+            dispatch(usersAddedDontUpdate(users))
+        else
+            dispatch(usersAdded(users))
+
         return picks
     } catch (err) {
         console.log('error parsing', err)

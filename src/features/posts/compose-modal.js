@@ -13,8 +13,6 @@ import { useEffect } from 'react'
 
 import QuotedPost from 'comps/quoted-post'
 
-import 'emoji-mart/css/emoji-mart.css'
-import { Picker } from 'emoji-mart'
 import DOMPurify from 'dompurify';
 import { filterInput } from 'utils/helpers'
 
@@ -106,21 +104,6 @@ export default props => {
         if (action.type === 'posts/composePost/fulfilled')
             handleClose()
     }
-    let addEmoji = emoji => {
-        setText(text => (text + emoji.native))
-    }
-    const picker = (
-        <Popover id="popover-basic">
-            <Picker
-                onSelect={addEmoji}
-                color="#3eaaee"
-                sheetSize={32}
-                emoji='point_up'
-                title="Pick your emoji"
-                set='twitter'
-            />
-        </Popover>
-    );
 
     return (
         <>
@@ -181,11 +164,6 @@ export default props => {
                 <Modal.Footer className="py-1">
                     <div className="d-flex w-100 justify-content-between align-items-center">
                         <div style={{ fontSize: "1.5em" }}>
-                            <OverlayTrigger rootClose={true} trigger="click" placement="auto-start" overlay={picker}>
-                                <button className="text-primary btn btn-lg rounded-circle btn-naked-primary p-2">
-                                    <FontAwesomeIcon size="lg" icon={faSmile} />
-                                </button>
-                            </OverlayTrigger>
                             <button className="disabled text-primary btn btn-lg rounded-circle btn-naked-primary p-2">
                                 <FontAwesomeIcon size="lg" icon={faImage} />
                             </button>

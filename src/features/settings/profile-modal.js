@@ -30,6 +30,7 @@ export default props => {
     let { entities: { url: { urls: [{ url } = {}] = [] } = {} } = {} } = user
     let [website, setWebsite] = useState(url || '')
     let [profile, setProfile] = useState(user.profile_image_url_https || getRandomProfileUrl())
+    let [bank, setBank] = useState(user.bank || 0)
 
     let [error, setError] = useState(null)
     let [progress, setProgress] = useState(0)
@@ -72,6 +73,7 @@ export default props => {
                 location: _location,
                 website: _website,
                 profile_image_url_https,
+                bank,
             }
             let action = await dispatch(updateUserDetails(body))
             if (action.type === 'users/updateUserDetails/fulfilled') {
@@ -126,7 +128,7 @@ export default props => {
                 )}
                 {status === 'error' && (
                     <Alert variant="danger" className="mb-0 font-weight-bold text-white">
-                        Error updating details, try again!
+                       Error al editar los detalles, intentalo de nuevo!
                     </Alert>
                 )}
                 {error && (
@@ -194,6 +196,28 @@ export default props => {
                                         onChange={n => setBio(n.target.value)}
                                     />
                                 </Form.Group>
+                               {
+                                user && user.role === 'tipster' && 
+                                <Form.Group controlId="bank">
+                                    <Form.Label>Monto base para Bank de inicio</Form.Label>
+                                    <Form.Control
+                                        as="input"
+                                        type="number"
+                                        style={{ fontSize: '1.25rem' }}
+                                        value={bank}
+                                        onChange={n => {
+                                            try {
+                                                const filteredValue = filterInput(n.target.value, 'natural', { max_length: 9 });
+                                                setBank(filteredValue);
+                                                setError(null)
+                                            } catch (error) {
+                                                setError(error.message)
+                                                console.log(error);
+                                            }
+                                        }}
+                                    />
+                                </Form.Group>
+                              } 
                                 <Form.Group controlId="location">
                                     <Form.Label>Ubicación</Form.Label>
                                     <Form.Control

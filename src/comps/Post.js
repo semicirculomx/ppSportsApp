@@ -20,38 +20,21 @@ function Post({ post, no_reply_tag, comments}) {
   let { remove_status: status } = useSelector(state => state.posts)
   let [error, setError] = useState(null)
   let [showPrompt, setShowPrompt] = useState(false)
-  let [promptHeader, setPromptHeader] = useState('')
-  let [promptBody, setPromptBody] = useState('')
   let history = useHistory()
   const dispatch = useDispatch();
 
-  const updatePost = (post) => {
-    console.log('update post', post)
-  }
-
-  const handleClose = () => {
-    console.log(status)
-    if (status !== 'error' || true) {
-        history.goBack()
-    }
-  }
-
-  const deletePost = async (post) => {
-    setPromptHeader('Seguro que quieres borrar este post?')
-    setPromptBody('No podrás recuperarlo')
+  const deletePost = () => {
     setShowPrompt(true)
   }
 
   const handleConfirmDelete = async () => {
     try {
+      setShowPrompt(false)
       let action = await dispatch(removePost(post?._id))
-
-      if (action.type === 'posts/removePost/fulfilled') console.log('deleted', action.payload)
-
+      if (action.type === 'posts/removePost/fulfilled') console.log('deleted', action)
     } catch (error) {
       setError(error)
     }
-    setShowPrompt(false)
   }
 
   const handleCancelDelete = () => {
@@ -114,7 +97,7 @@ function Post({ post, no_reply_tag, comments}) {
                   <Dropdown.Item
                     className="high-index"
                     as='button'
-                    onClick={e => deletePost(post)}
+                    onClick={e => deletePost()}
                   >Borrar</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>)}
@@ -171,7 +154,7 @@ function Post({ post, no_reply_tag, comments}) {
                                   <Dropdown.Item
                                     className="high-index"
                                     as='button'
-                                    onClick={e => deletePost(post)}
+                                    onClick={e => deletePost()}
                                   >Borrar</Dropdown.Item>
                                 </Dropdown.Menu>
                               </Dropdown>)}

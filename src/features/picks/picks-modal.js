@@ -1,17 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState, useRef } from 'react'
 import { Modal, Media, Alert, ProgressBar, Row, Col } from 'react-bootstrap'
-import { useHistory, useLocation } from 'react-router-dom'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faImage } from '@fortawesome/free-regular-svg-icons/faImage'
-import { faSmile } from '@fortawesome/free-regular-svg-icons/faSmile'
-
-import { useSelector, useDispatch } from 'react-redux'
-import { useEffect } from 'react'
-
-import 'emoji-mart/css/emoji-mart.css'
-import DOMPurify from 'dompurify'
 
 import ComposeModal from 'features/picks/Compose'
 
@@ -20,17 +11,20 @@ import {ReactComponent as StarRounded} from '../../assets/icons/star-square-svgr
 
 
 export default props => {
-    let history = useHistory()
-
-    let { compose_status: status } = useSelector(state => state.posts)
+    let [showPicksModal, setShowPicksModal] = useState(props.show)
 
     const [formType, setFormType] = useState(null)
 
-    const handleClose = () => {
-        if (status !== 'error' || true) {
-            history.goBack()
-        }
+    const closeModal = () => {
+        console.log('closemodal pick modal')
+        setFormType(null)
+            setShowPicksModal((currentValue) => !currentValue);
+            props.onClose()
     }
+
+    useEffect(() => {
+      setShowPicksModal(props.show)
+    }, [props.show])
 
     return (
         <>
@@ -39,8 +33,8 @@ export default props => {
                 className="p-0"
                 size="lg"
                 scrollable={true}
-                show={true}
-                onHide={handleClose}
+                show={showPicksModal}
+                onHide={closeModal}
                 backdrop="static"
                 keyboard={false}
             >
@@ -78,7 +72,7 @@ export default props => {
             </Modal>
             )}
             {formType && ( 
-                    <ComposeModal type={formType} />
+                    <ComposeModal onClose={closeModal} show={showPicksModal} type={formType} />
                 )}
         </>
     )

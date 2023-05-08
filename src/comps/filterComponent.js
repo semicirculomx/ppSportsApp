@@ -10,11 +10,11 @@ const FilterComponent = ({ onFilterChange }) => {
   return (
     <Form.Group className="input-container" controlId="filterSelect">
       <Form.Control className="input-field" as="select" onChange={handleFilterChange}>
-      <option value="all">All</option>
+      <option value="all">Todos</option>
+      <option value="today">Pendientes</option>
+      <option value="tomorrow">Ganados</option>
         <option value="recent">Más recientes</option>
-        <option value="most-liked">Más gustados</option>
-        <option value="lost">Pick perdido</option>
-        <option value="won">Pick ganado</option>
+        <option value="most-liked">Perdidos</option>
       </Form.Control>
     </Form.Group>
 

@@ -16,6 +16,7 @@ import { Col, Badge } from 'react-bootstrap'
 
 import { useSelector } from 'react-redux'
 import { selectUnread } from 'features/notify/notifySlice'
+import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons'
 
 function Header(props) {
     let notifsCount = useSelector(selectUnread).length
@@ -25,27 +26,27 @@ function Header(props) {
         href: "/home",
     }
     let compose = {
-        name: "Post",
+        name: "Publicar",
         icon: faPlusCircle
     }
     let list = [
         {
-            name: "Home",
+            name: "Análisis",
             href: "/home",
             icon: faHome
         },
         {
-            name: "Explore",
+            name: "Buscar",
             href: "/explore",
             icon: faHashtag
         },
         {
-            name: "Profile",
+            name: "Perfil",
             href: `/user/${screen_name}`,
             icon: faUser,
         },
         {
-            name: "Notifications",
+            name: "Notificaciones",
             href: "/notifications",
             icon: faBell,
             count: notifsCount
@@ -55,17 +56,27 @@ function Header(props) {
         //     href: "/chats",
         //     icon: faComments
         // },
-        {
-            name: "Settings",
+        // {
+        //     name: "Settings",
+        //     href: "/settings",
+        //     icon: faEllipsisH
+        // },
+        //  {
+        //     name: "Settings",
+        //     href: "/settings",
+        //     icon: faEllipsisH
+        // },
+         {
+            name: "Partidos",
             href: "/settings",
-            icon: faEllipsisH
+            icon: faCalendarAlt
         },
-        {
-            name: "Messages",
-            href: "/messages",
-            icon: faEnvelope,
-            disabled: true
-        },
+        // {
+        //     name: "Messages",
+        //     href: "/messages",
+        //     icon: faEnvelope,
+        //     disabled: true
+        // },
 
     ]
     return (
