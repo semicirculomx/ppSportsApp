@@ -84,10 +84,10 @@ export const getUserPicks = createAsyncThunk(
     async (username, { dispatch, getState }) => {
         let { user_picks_page: p } = getState().users
         let picksLength = selectUserPicks(getState(), username).length
-        if (!picksLength || picksLength === 0) {
-            dispatch(resetPicksPage())
-            p = 0
-        }
+        // if (!picksLength || picksLength === 0) {
+        //     dispatch(resetPicksPage())
+        //     p = 0
+        // }
         console.log(p, getState().users.user_picks_page, p+1)
         let url = `/api/user_picks/${username}?p=${p + 1}`
         let { user, picks } = await request(url, { dispatch })
@@ -106,10 +106,10 @@ export const getUserPosts = createAsyncThunk(
     async (username, { dispatch, getState }) => {
         let { user_posts_page: p } = getState().users
         let postsLength = selectUserPosts(getState(), username).length
-        if (!postsLength || postsLength === 0) {
-            dispatch(resetPostsPage())
-            p = 0
-        }
+        // if (!postsLength || postsLength === 0) {
+        //     dispatch(resetPostsPage())
+        //     p = 0
+        // }
         console.log(p, getState().users.user_picks_page, p+1)
         let url = `/api/user_posts/${username}?p=${p + 1}`
         let { posts, user } = await request(url, { dispatch })
