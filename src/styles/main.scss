@@ -1444,3 +1444,13 @@ footer.landing-footer {
     margin: 30px 0;
   }
 }
+
+#oddspedia-widget-live-score-popular-false-sports-football-tennis-basketball-esports-baseball-mixed-martial-arts-boxing-leagues-false
+{
+  width: 100%;   // O especifica un ancho en píxeles si lo prefieres
+        overflow: auto;
+        display: flex;
+        margin: 20px 0; // Espacio arriba y abajo
+        padding: 10px;  // Espacio dentro del div
+  position:relative;
+}

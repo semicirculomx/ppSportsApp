@@ -28,6 +28,8 @@ import { useAlerts } from 'features/alerts/alertsContext'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import TextEditor from 'comps/TextEditor'
+import OddspediaWidget from 'comps/BetsComparison'
+import Feed from 'features/picks/Feed'
 
 export default props => {
     const { ensureCompleteProfile } = useAlerts()
@@ -48,7 +50,7 @@ export default props => {
                         <Route path="/top-matches" component={bestMatches}/>
                         <Route path="/match/:matchId" component={MatchDetails}/>
 
-                        <Route path="/text-editor" component={TextEditor}/>
+                        <Route path="/live-scores" component={Feed}/>
                         <Route path="/compose/post" component={Compose}/>
 
                         <Route path='/post/:postId/likes' component={PostLikes} />

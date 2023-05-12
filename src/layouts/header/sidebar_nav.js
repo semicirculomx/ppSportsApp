@@ -13,36 +13,37 @@ import { Badge } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
 import { selectUnread } from 'features/notify/notifySlice'
 
-import {ReactComponent as Cancel} from '../../assets/icons/cancel.svg'
+import { ReactComponent as Cancel } from '../../assets/icons/cancel.svg'
+import { faVideo } from '@fortawesome/free-solid-svg-icons'
 
 
 
-function SidebarNav({isOpen, closeModal}) {
+function SidebarNav({ isOpen, closeModal }) {
   let notifsCount = useSelector(selectUnread).length
-    let { user: { screen_name } } = useSelector(state => state.auth)
-    let list = [
-        {
-            name: "Partidos del día",
-            href: "/home",
-            icon: faHome
-        },
-        {
-            name: "Picks",
-            href: "/explore",
-            icon: faSearch
-        },
-        {
-            name: "Análisis",
-            href: "/notifications",
-            icon: faBell,
-            count: notifsCount
-        },
-        {
-            name: "Expertos",
-            href: `/user/${screen_name}`,
-            icon: faUser,
-        }
-    ]
+  let { user: { screen_name } } = useSelector(state => state.auth)
+  let list = [
+    {
+      name: "Partidos del día",
+      href: "/home",
+      icon: faHome
+    },
+    {
+      name: "En vivo",
+      href: "/live-scores",
+      icon: faVideo
+    },
+    {
+      name: "Análisis",
+      href: "/notifications",
+      icon: faBell,
+      count: notifsCount
+    },
+    {
+      name: "Expertos",
+      href: `/user/${screen_name}`,
+      icon: faUser,
+    }
+  ]
 
   const renderSidebar = () => {
     return (
@@ -69,37 +70,46 @@ function SidebarNav({isOpen, closeModal}) {
               </div> */}
             </div>
             <div className="sidebar__main-bottom">
-            {list.map(item => {
+              {list.map(item => {
                 let vis = item.disabled ? 'disabled' : ''
                 let badge = item.count ? <>
-                <Badge className="position-absolute" variant="primary" style={{ top: 6, right: 6, left: 'unset' }}>
-                  {item.count}</Badge><span className="sr-only">
+                  <Badge className="position-absolute" variant="primary" style={{ top: 6, right: 6, left: 'unset' }}>
+                    {item.count}</Badge><span className="sr-only">
                     new items
-                    </span>
-                    </> : null
+                  </span>
+                </> : null
                 return (
 
-                <div key={item.name} className="">
+                  <div key={item.name} className="">
                     <NavLink
-                        key={item.name}
-                        to={item.href}
-                        activeClassName="active"
-                        className={`${vis} font-weight-bold btn btn-naked-primary rounded-pill p-3`}
+                      key={item.name}
+                      to={item.href}
+                      activeClassName="active"
+                      className={`${vis} font-weight-bold btn btn-naked-primary rounded-pill p-3`}
                     >
-                        {item.name}
-                        {/* <FontAwesomeIcon
+                      {item.name}
+                      {/* <FontAwesomeIcon
                             icon={item.icon}
                             size='lg'
                         /> */}
                     </NavLink>
                     {badge}
-                </div>)
-            })}
-        </div>
-              {/* <Leagues leagueClicked={() => closeModal()} /> */}
+                  </div>)
+              })}
             </div>
+            <div className="footer"><div className="shell">
+              <img src="/logo-oddspedia-dark.svg" alt="logo" />
+              <p className="footer__copyright">
+                Data powered by
+              </p>
+              <a rel="nofollow" href="https://oddspedia.com">
+                  Terms&amp;Conditions
+                </a> 
+                </div>
+                </div>
           </div>
         </div>
+      </div>
     )
     // }
     // return <div></div>
