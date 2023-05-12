@@ -50,7 +50,7 @@ export default props => {
                         <Route path="/top-matches" component={bestMatches}/>
                         <Route path="/match/:matchId" component={MatchDetails}/>
 
-                        <Route path="/live-scores" component={Feed}/>
+                        <Route path="/live-scores" component={OddspediaWidget}/>
                         <Route path="/compose/post" component={Compose}/>
 
                         <Route path='/post/:postId/likes' component={PostLikes} />
