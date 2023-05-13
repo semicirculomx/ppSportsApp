@@ -13,7 +13,13 @@ import { useEffect } from 'react'
 import { AlertsPovider } from 'features/alerts/alertsContext'
 
 import { subscribeUserToPush } from '../subscription'
+import TagManager from 'react-gtm-module'
 
+const tagManagerArgs = {
+    gtmId: 'GTM-N9TDKTD'
+}
+
+TagManager.initialize(tagManagerArgs)
 //import { render } from '@testing-library/react';
 
 function App() {
@@ -50,9 +56,7 @@ function App() {
               </Switch>
             </Col>
           </Row>
-          <MediaQuery maxWidth={576}>
             <Nav />
-          </MediaQuery>
         </Container>
       </AlertsPovider>
     </Router>
