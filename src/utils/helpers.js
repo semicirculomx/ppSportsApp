@@ -115,7 +115,7 @@ export function filterInput(input = '', type = 'custom', {
     }
     if (reg) {
         if (!reg.test(input)) {
-            throw Error(`Revisa tu información, todos los campos`)
+            throw Error(`${identifier} Debe cumplir estas condiciones: ${reg} (entre ${min} y ${max} carateres)`)
         }
     }
     //else custom || html

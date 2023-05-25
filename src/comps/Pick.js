@@ -151,6 +151,11 @@ function Pick({ pick, isPostPick }) {
                       </p>
                     </div>
                     <div className="mb-1 d-flex justify-content-between align-items-center">
+                    <span className="w-75">
+                    {pick?.pick_title}
+                    </span>
+                  </div>
+                    <div className="mb-1 d-flex justify-content-between align-items-center">
                       <span className="w-75">
                         {(bet.match.home_team && bet.match.home_team !== 'N/A') && (bet.match.away_team && bet.match.away_team !== 'N/A') ? `${bet.match.home_team} vs ${bet.match.away_team}` : bet.match.matchTitle} - {dateConverter(bet.match.commence_time)}
                       </span>
@@ -219,6 +224,11 @@ function Pick({ pick, isPostPick }) {
                   <div className="mb-1 d-flex justify-content-between align-items-center">
                     <span className="w-75">
                       {(bet.match.home_team && bet.match.away_team) ? `${bet.match.home_team} vs ${bet.match.away_team}` : bet.match.matchTitle} - {dateConverter(bet.match.commence_time)}
+                    </span>
+                  </div> 
+                  <div className="mb-1 d-flex justify-content-between align-items-center">
+                    <span className="w-75">
+                    {pick?.pick_title}
                     </span>
                   </div>
                   <div className="d-flex w-100 justify-content-between align-items-center">

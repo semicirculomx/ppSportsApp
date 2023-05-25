@@ -14,15 +14,17 @@ class Signup extends React.Component {
     }
     handleSubmit = async (e) => {
         e.preventDefault()
+        console.log(e)
         if (this.state.disabled)
             return
         this.setState({ error: null, disabled: true })
+        console.log(this.state)
         try {
             let form = e.target
             let username = filterInput(form.username.value, 'username', { min_length: 4 })
             let password = filterInput(form.password.value, 'password')
             let fullname = filterInput(form.fullname.value, 'name', { min_length: 0 })
-            let responce = await fetch('/auth/signup', {
+            let response = await fetch('/auth/signup', {
                 method: 'POST',
                 body: JSON.stringify({
                     username,
@@ -33,12 +35,12 @@ class Signup extends React.Component {
                     'Content-Type': 'application/json'
                 }
             })
-            if (!responce.ok) {
-                if (responce.status === 409) //conflict
-                    throw Error((await responce.json()).message)
+            if (!response.ok) {
+                if (response.status === 409) //conflict
+                    throw Error((await response.json()).message)
                 throw Error('Algo salio mal')
             }
-            let data = await responce.json()
+            let data = await response.json()
             console.log(data.message)
             this.setState({ disabled: false })
             this.props.login(data.user)
