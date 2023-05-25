@@ -39,18 +39,20 @@ const OddspediaWidget = () => {
             document.body.removeChild(script);
         }
     }, []);
-	if(loading) {
-		return <Spinner />
-	}
-    return (
+
+	return (
 		<>
-     <Heading title="Resultados en vivo" logo />
-		<div id="oddspedia-widget-live-score-popular-false-sports-football-tennis-basketball-esports-baseball-mixed-martial-arts-boxing-leagues-false">
-            {/* El widget de la tercera parte se cargará aquí */}
-        </div>
+		  <Heading title="Resultados en vivo" logo />
+		  {loading ? (
+			<Spinner />
+		  ) : (
+			<div id="oddspedia-widget-live-score-popular-false-sports-football-tennis-basketball-esports-baseball-mixed-martial-arts-boxing-leagues-false">
+			  {/* The third-party widget will be loaded here */}
+			</div>
+		  )}
 		</>
-    );
-}
+	  );
+};
 
 export default OddspediaWidget;
 
