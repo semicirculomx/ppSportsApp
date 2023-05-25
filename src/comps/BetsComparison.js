@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Heading from './Heading';
+import Spinner from './Spinner';
 
 const OddspediaWidget = () => {
 	const [loading, setLoading] = useState(true);
@@ -38,7 +39,9 @@ const OddspediaWidget = () => {
             document.body.removeChild(script);
         }
     }, []);
-
+	if(loading) {
+		return <Spinner />
+	}
     return (
 		<>
      <Heading title="Resultados en vivo" logo />
