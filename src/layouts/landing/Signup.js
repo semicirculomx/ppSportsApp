@@ -14,11 +14,9 @@ class Signup extends React.Component {
     }
     handleSubmit = async (e) => {
         e.preventDefault()
-        console.log(e)
         if (this.state.disabled)
             return
         this.setState({ error: null, disabled: true })
-        console.log(this.state)
         try {
             let form = e.target
             let username = filterInput(form.username.value, 'username', { min_length: 4 })
