@@ -32,8 +32,8 @@ function Nav() {
       icon: faHome,
     },
     {
-      name: 'Partidos de valía',
-      href: '/top-matches',
+      name: 'Partidos en vivo',
+      href: '/live-scores',
       icon: faCalendarCheck,
     },
     {

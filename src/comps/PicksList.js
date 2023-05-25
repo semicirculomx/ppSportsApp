@@ -43,17 +43,17 @@ export default function PicksList(props) {
 
   // eslint-disable-next-line
   useEffect(useCallback(() => {
-    if ((status === 'idle' || status === 'done')) {
-      getPicks()
-      // console.log('fetching on posts load, status:', status)
+    if ((status === 'idle' || status === 'done') && !picks.length) {
+        getPicks()
+        // console.log('fetching on posts load, status:', status)
     }
-  }, [status, getPicks]), [])
-  useBottomScrollListener(useCallback(() => {
-    if (status === "idle") {
-      getPicks()
-      console.log('loading more picks, status:', status)
-    }
-  }, [status, getPicks]), 700, 200, null, true)
+}, [status, picks, getPicks]), [getPicks])
+  // useBottomScrollListener(useCallback(() => {
+  //   if (status === "idle") {
+  //     getPicks()
+  //     console.log('loading more picks, status:', status)
+  //   }
+  // }, [status, getPicks]), 700, 200, null, true)
 
   if (status === 'loading' && !picks.length)
     return <Spinner />
@@ -80,6 +80,13 @@ export default function PicksList(props) {
         )}
         {status === 'loading' && <Spinner />}
         {status === 'error' && <TryAgain fn={getPicks} />}
+        {(filteredPicks.length > 0) && (
+              <div className="custom-btn d-flex justify-content-center" >
+              <button onClick={getPicks} className="btn mt-2 mb-4">
+                Cargar más
+              </button>
+              </div>
+             )}
       </ListGroup>
     </>
   );

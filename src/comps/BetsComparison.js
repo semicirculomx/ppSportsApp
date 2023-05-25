@@ -41,7 +41,7 @@ const OddspediaWidget = () => {
 
     return (
 		<>
-     <Heading title="Pronósticos del día" logo />
+     <Heading title="Resultados en vivo" logo />
 		<div id="oddspedia-widget-live-score-popular-false-sports-football-tennis-basketball-esports-baseball-mixed-martial-arts-boxing-leagues-false">
             {/* El widget de la tercera parte se cargará aquí */}
         </div>

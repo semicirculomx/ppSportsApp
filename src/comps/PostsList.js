@@ -1,6 +1,6 @@
 import React from 'react'
 import { useEffect, useCallback, useState } from 'react'
-import { Media, Row, ListGroup, Figure } from 'react-bootstrap'
+import { Media, Row, ListGroup, Figure, Button } from 'react-bootstrap'
 import Spinner from 'comps/Spinner'
 import Post from 'comps/Post'
 import FilterComponent from 'comps/filterComponent';
@@ -9,7 +9,7 @@ import ReactTimeAgo from 'react-time-ago'
 import { useBottomScrollListener } from 'react-bottom-scroll-listener'
 import TryAgain from './TryAgain'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faChevronUp, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 import CategoryCarousel from './CategoryCarousel'
 import PostTag from './post-tag'
@@ -98,22 +98,34 @@ const [secondLevelFilter, setSecondLevelFilter] = useState('recent');
         Not the best implementation, but I dont want to spend hours to check if changing it breaks anything
     */
     // eslint-disable-next-line
-    useEffect(useCallback(() => {
-      if (status === 'idle' || status === 'done') {
-          getPosts()
-      }
-  }, [status, getPosts]), [])
-  useBottomScrollListener(useCallback(() => {
-    if (status === "idle") {
+  //   useEffect(useCallback(() => {
+  //     if (status === 'idle' || status === 'done') {
+  //       console.log('loading posts, status:', status)
+
+  //         getPosts()
+  //     }
+  // }, [status, getPosts]), [])
+  useEffect(useCallback(() => {
+    if ((status === 'idle' || status === 'done') && !posts.length) {
         getPosts()
-        console.log('loading more posts, status:', status)
+        // console.log('fetching on posts load, status:', status)
     }
-}, [status, getPosts]), 700, 200, null, true)
+}, [status, posts, getPosts]), [getPosts])
+//   useBottomScrollListener(useCallback(() => {
+//     if (status === "idle") {
+//         getPosts()
+//         console.log('loading more posts, status:', status)
+//     }
+// }, [status, getPosts]), 700, 200, null, true)
 
     // const selectedItemStyle = {
     //     backgroundColor: 'rgba(0, 123, 255, 0.1)',
     //   };
-
+  
+    const scrollToTop = () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    
     const repliesCard = ( <ListGroup variant="flush" className="border-bottom">
     {(posts.length > 0) ? posts.map(post => {
         let { retweeted_by } = post
@@ -139,7 +151,6 @@ const [secondLevelFilter, setSecondLevelFilter] = useState('recent');
     {status === 'error' && <TryAgain fn={getPosts} />}
 </ListGroup>
 )
-
     if (status === 'loading' && !posts.length)
         return <Spinner />
     return (
@@ -148,9 +159,9 @@ const [secondLevelFilter, setSecondLevelFilter] = useState('recent');
         <div className=''>
          <CategoryCarousel onCategorySelected={handleFilterChange}/>
         </div>}
-             {!no_filter && 
+             {/*!no_filter && 
         <div className='justify-content-between align-items-center px-4 py-2 filter-bar'>
-        <FilterComponent onFilterChange={handleFilterChange} />
+        <FilterComponent onFilterChange={handleFilterChange} />*/}
         {/* {showDeleteButton && (
   <div style={{ display: "flex", alignItems: "center" }}>
     <span>{selectedItems.size} items seleccionados</span>
@@ -181,8 +192,8 @@ const [secondLevelFilter, setSecondLevelFilter] = useState('recent');
       Limpiar Selección
     </button>
   </div>
-)} */}
-        </div>}
+)} 
+        </div>}*/} 
         {comments && 
           repliesCard
         }
@@ -208,6 +219,28 @@ const [secondLevelFilter, setSecondLevelFilter] = useState('recent');
             )}
             {status === 'loading' && <Spinner />}
             {status === 'error' && <TryAgain fn={getPosts} />}
+            {(filteredPosts.length > 0) && (
+              <div className="custom-btn d-flex justify-content-center" >
+              <button onClick={getPosts} className="btn mt-2 mb-4">
+                Cargar más
+              </button>
+              </div>
+             )}
+              {posts.length > 15 &&
+      <Button
+          onClick={() => {
+            scrollToTop()
+          }}
+          style={{
+            right: '.5em',
+            bottom: '4em',
+            fontSize: '.8em',
+          }}
+          className="position-absolute custom"
+        >
+          <FontAwesomeIcon className="" size="1x" icon={faChevronUp} />
+        </Button>
+      }
         </ListGroup>
       }
               </>

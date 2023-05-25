@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getPicksFeed, selectFeedPicks } from './picksSlice'
 
 import PicksList from 'comps/PicksList'
+import OddspediaWidget from 'comps/BetsComparison'
 
 export default (props) => {
     let { feed_status: status } = useSelector(state => state.picks)
@@ -20,11 +21,8 @@ export default (props) => {
   
     return (<>
         {/* <ScrollManager scrollKey="feed-screen" /> */}
-        
-        <PicksList
-            picks={picks}
-            status={status}
-            getFeedPicks={getPicks}
-        />
+        <>
+        <OddspediaWidget/>
+        </>
     </>)
 }

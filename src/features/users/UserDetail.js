@@ -51,22 +51,24 @@ export default props => {
     };
 
     let getPosts = useCallback(() => {
+        console.log('getPosts')
         dispatch(getUserPosts(username))
         // eslint-disable-next-line
     }, [username])
     
     let getPicks = useCallback(() => {
+        console.log('getPicks')
         dispatch(getUserPicks(username))
             // eslint-disable-next-line
     }, [username])
 
     useEffect(() => {
-         if(status === 'idle') {
+         if((status === 'idle' || status === 'done') && !posts.length) {
+            console.log('get user timeline')
             dispatch(getUserTimeline(username))
          }
         // eslint-disable-next-line
-    }, [])
-
+    }, [username])
     if (status === 'loading' && !user)
         return <Spinner />
     let userFeed = (<>
@@ -149,7 +151,7 @@ export default props => {
                     <Col xs="6" lg="4" className="mb-1">
                         <div className="d-flex text-muted align-items-top">
                             <FontAwesomeIcon className="mt-1" icon={faTrophy} style={{ fontSize: '1em' }} />
-                            <span className="ml-1">Ganadas: {user.won_bets}</span>                     
+                            <span className="ml-1">Ganadas: ...</span>                     
                         </div>
                     </Col>
                 </Row>                
@@ -157,7 +159,7 @@ export default props => {
                     <Col xs="6" lg="4" className="mb-1">
                         <div className="d-flex text-muted align-items-top">
                             <FontAwesomeIcon className="mt-1" icon={faWindowClose} style={{ fontSize: '1em' }} />
-                            <span className="ml-1">Perdidas: {user.lost_bets}</span>
+                            <span className="ml-1">Perdidas: ...</span>
                         </div>
                     </Col>
                 </Row>

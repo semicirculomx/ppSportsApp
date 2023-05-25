@@ -97,16 +97,6 @@ function SidebarNav({ isOpen, closeModal }) {
                   </div>)
               })}
             </div>
-            <div className="footer"><div className="shell">
-              <img src="/logo-oddspedia-dark.svg" alt="logo" />
-              <p className="footer__copyright">
-                Data powered by
-              </p>
-              <a rel="nofollow" href="https://oddspedia.com">
-                  Terms&amp;Conditions
-                </a> 
-                </div>
-                </div>
           </div>
         </div>
       </div>

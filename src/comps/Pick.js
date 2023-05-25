@@ -13,7 +13,7 @@ import { useHistory } from 'react-router-dom';
 import { removePick, updatePick } from 'features/picks/picksSlice';
 
 
-function Pick({pick}) {
+function Pick({ pick, isPostPick }) {
   let { user: authUser, isAuthenticated } = useSelector(state => state.auth)
   let { remove_status: status_remove } = useSelector(state => state.picks)
   let { update_status: status_update } = useSelector(state => state.posts)
@@ -40,13 +40,13 @@ function Pick({pick}) {
   };
 
   const updatePickStatus = async () => {
-    let body = { ...pick , status: selectedStatus }
+    let body = { ...pick, status: selectedStatus }
     let action;
     try {
-      if(pick.status !== selectedStatus)
-       action = await dispatch(updatePick(body));
-       if(action.type === 'picks/updatePick/fulfilled')
-          setShowEditModal(false);
+      if (pick.status !== selectedStatus)
+        action = await dispatch(updatePick(body));
+      if (action.type === 'picks/updatePick/fulfilled')
+        setShowEditModal(false);
     } catch (error) {
       setError(error);
     }
@@ -74,7 +74,7 @@ function Pick({pick}) {
         return "bg-pending";
     }
   }
-  
+
   const getBadgeText = (status) => {
     switch (status) {
       case "won":
@@ -96,7 +96,7 @@ function Pick({pick}) {
       default:
         return "Desconocido";
     }
-  }  
+  }
   const handleConfirmDelete = async () => {
     try {
       setShowPrompt(false)
@@ -114,28 +114,27 @@ function Pick({pick}) {
   }
   return (
     <>
-      <div onClick={handleExpandClick}>
-      <div className="d-flex w-100 justify-content-between align-items-center mb-2">  
-        <div>
-        <h5 className="mb-0">{pick?.pick_title}</h5>
-         <div className="mb-1 align-items-center">
-            <span className="mr-1 text-muted">{pick?.stake}𝑢</span>
-            <span className="mr-1 text-dark">|</span>
-            <span className="mr-1 text-muted">${pick?.profit.toFixed(2)}</span>
-            {/* <small>hace <ReactTimeAgo date={Date.parse(pick?.created_at)} timeStyle="twitter" /></small> */}
-            </div>
-            <div className="align-items-center">
-            <span className="mr-1 text-dark badge">Cuota: {pick?.totalOdds}</span>
+      {isPostPick &&
+        <>
+          <div onClick={handleExpandClick} className="d-flex w-100 justify-content-between align-items-center mb-2">
+            <div>
+              <div className="mb-1 align-items-center">
+                <span className="mr-1">{pick?.stake}𝑢</span>
+                <span className="mr-1">|</span>
+                <span className="mr-1">{(((pick?.stake * 250) * 100) / pick?.user.bank)}%</span>
+                {/* <small>hace <ReactTimeAgo date={Date.parse(pick?.created_at)} timeStyle="twitter" /></small> */}
+              </div>
+              <div className="align-items-center">
+                {/* <span className="mr-1 text-dark badge">Cuota: {pick?.totalOdds}</span>
             <span className="mr-1 ">|</span>
-            <span className="mr-1 text-dark badge">ROI: {(((pick?.profit.toFixed(2)/(pick?.stake*250)))*100).toFixed(2)}%</span>
-            {/* <small>hace <ReactTimeAgo date={Date.parse(pick?.created_at)} timeStyle="twitter" /></small> */}
+            <span className="mr-1 text-dark badge">ROI: {(((pick?.profit.toFixed(2) / (pick?.stake * 250))) * 100).toFixed(2)}%</span> */}
+                {/* <small>hace <ReactTimeAgo date={Date.parse(pick?.created_at)} timeStyle="twitter" /></small> */}
+              </div>
             </div>
-        </div>
             <span className={`badge ${getBadgeClass(pick?.status)}`}>
               {getBadgeText(pick?.status)}
             </span>
-        </div>
-        {isExpanded && (
+          </div>
           <div className="expanded-info">
             {pick &&
               pick?.bets.length > 0 &&
@@ -147,17 +146,17 @@ function Pick({pick}) {
                       <p className="w-75 mb-0">
                         {bet.market}
                       </p>
-                      <p className="mb-0 font-weight-bold">
-                        {(bet.odds > 0) ? `+${bet.odds}`: (bet.odds)}
+                      <p className="mb-0">
+                        {(bet.odds > 0) ? `+${bet.odds}` : (bet.odds)}
                       </p>
                     </div>
                     <div className="mb-1 d-flex justify-content-between align-items-center">
                       <span className="w-75">
-                      {(bet.match.home_team && bet.match.away_team)? `${bet.match.home_team} vs ${bet.match.away_team}`: bet.match.matchTitle } - {dateConverter(bet.match.commence_time)}
+                        {(bet.match.home_team && bet.match.home_team !== 'N/A') && (bet.match.away_team && bet.match.away_team !== 'N/A') ? `${bet.match.home_team} vs ${bet.match.away_team}` : bet.match.matchTitle} - {dateConverter(bet.match.commence_time)}
                       </span>
                     </div>
                     <div className="d-flex w-100 justify-content-between align-items-center">
-                      <span className="text-muted">
+                      <span className="">
                         {bet.match.competition} - {bet.match.sport}
                         <br />
                       </span>
@@ -165,8 +164,74 @@ function Pick({pick}) {
                   </div>
                 </div>
               ))}
-           {authUser?._id === pick?.user._id &&(
-             <div className="d-flex w-100 justify-content-end align-items-center">
+          </div>
+          <div className="d-flex w-100 justify-content-between align-items-center mb-2">
+              <div className="align-items-center">
+                <p className="mb-0 text-muted">Apuesta</p>
+                <span  style={{fontSize: '14px'}} className="font-weight-bold">${(pick?.stake * 250)}</span>
+                {/* <small>hace <ReactTimeAgo date={Date.parse(pick?.created_at)} timeStyle="twitter" /></small> */}
+              </div>
+              <div className="align-items-center">
+                <p className="mb-0 text-muted">Ganancias potenciales</p>
+                <span style={{fontSize: '14px'}} className="font-weight-bold">${pick.profit.toFixed(2)}</span>
+              </div>
+          </div>
+        </>
+      }
+      {!isPostPick &&
+        <div onClick={handleExpandClick} className="d-flex w-100 justify-content-between align-items-center mb-2">
+          <div>
+            <h5 className="mb-0">{pick?.pick_title}</h5>
+            <div className="mb-1 align-items-center">
+              <span className="mr-1 text-muted">{pick?.stake}𝑢</span>
+              <span className="mr-1 text-dark">|</span>
+              <span className="mr-1 text-muted">${pick?.profit.toFixed(2)}</span>
+              {/* <small>hace <ReactTimeAgo date={Date.parse(pick?.created_at)} timeStyle="twitter" /></small> */}
+            </div>
+            <div className="align-items-center">
+              <span className="mr-1 text-dark badge">Cuota: {pick?.totalOdds}</span>
+              <span className="mr-1 ">|</span>
+              <span className="mr-1 text-dark badge">ROI: {(((pick?.profit.toFixed(2) / (pick?.stake * 250))) * 100).toFixed(2)}%</span>
+              {/* <small>hace <ReactTimeAgo date={Date.parse(pick?.created_at)} timeStyle="twitter" /></small> */}
+            </div>
+          </div>
+          <span className={`badge ${getBadgeClass(pick?.status)}`}>
+            {getBadgeText(pick?.status)}
+          </span>
+        </div>
+      }
+      {(isExpanded && !isPostPick) && (
+        <div className="expanded-info">
+          {pick &&
+            pick?.bets.length > 0 &&
+            pick?.bets.map((bet) => (
+              <div className="bet-item" key={bet._id}>
+                <div className="timeline"></div>
+                <div className="bet-content">
+                  <div className="mb-1 d-flex justify-content-between align-items-center">
+                    <p className="w-75 mb-0">
+                      {bet.market}
+                    </p>
+                    <p className="mb-0 font-weight-bold">
+                      {(bet.odds > 0) ? `+${bet.odds}` : (bet.odds)}
+                    </p>
+                  </div>
+                  <div className="mb-1 d-flex justify-content-between align-items-center">
+                    <span className="w-75">
+                      {(bet.match.home_team && bet.match.away_team) ? `${bet.match.home_team} vs ${bet.match.away_team}` : bet.match.matchTitle} - {dateConverter(bet.match.commence_time)}
+                    </span>
+                  </div>
+                  <div className="d-flex w-100 justify-content-between align-items-center">
+                    <span className="text-muted">
+                      {bet.match.competition} - {bet.match.sport}
+                      <br />
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          {authUser?._id === pick?.user._id && (
+            <div className="d-flex w-100 justify-content-end align-items-center">
 
               <Button
                 className="cutom-btn mx-1 btn-light btn-sm"
@@ -183,11 +248,10 @@ function Pick({pick}) {
                 <FontAwesomeIcon icon={faTrash}>Borrar</FontAwesomeIcon>
 
               </Button>
-            </div> 
-            )}
-          </div>
-        )}
-      </div>
+            </div>
+          )}
+        </div>
+      )}
       <Prompt
         show={showPrompt}
         header="Seguro que quieres borrar este post?"
@@ -236,7 +300,7 @@ function Pick({pick}) {
         </Modal.Footer>
       </Modal>
     </>
-  );
+  )
 }
 
 export default Pick;

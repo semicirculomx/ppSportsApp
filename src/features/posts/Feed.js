@@ -4,6 +4,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getFeed, selectFeedPosts } from './postsSlice'
 
 import PostsList from 'comps/PostsList'
+import { Button } from 'react-bootstrap'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faChevronUp } from '@fortawesome/free-solid-svg-icons'
 
 export default function Feed() {
   const dispatch = useDispatch()
