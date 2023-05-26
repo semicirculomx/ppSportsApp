@@ -28,7 +28,7 @@ class Login extends React.Component {
         this.setState({ error: null, disabled: true })
         try {
             let form = e.target
-            let username = filterInput(form.username.value, 'username', { min_length: 6 })
+            let username = filterInput(form.username.value, 'username', { min_length: 4 })
             let password = filterInput(form.password.value, 'password')
             let response = await fetch('/auth/login', {
                 method: 'POST',

@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { unsubscribeUser } from '../subscription'
+import { request } from 'api'
 
 export const login = createAsyncThunk('auth/login', async (_, { dispatch }) => {
     let res = await fetch('/auth/login')
@@ -22,6 +23,20 @@ export const logout = createAsyncThunk('auth/logout', async (_, { dispatch }) =>
         method: 'POST',
     })
 })
+
+export const password_reset = createAsyncThunk(
+    "auth/password-reset",
+    async ({ body, url = "/auth/password-reset" }, { dispatch }) => {
+      try {
+        const { message } = await request(url, { body, dispatch });
+        console.log(message)
+        return message
+      } catch (error) {
+        console.error(error);
+        throw new Error("Error al cambiar la contraseña");
+      }
+    }
+  );
 
 const authSlice = createSlice({
     name: 'auth',

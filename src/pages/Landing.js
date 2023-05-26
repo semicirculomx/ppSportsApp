@@ -11,7 +11,7 @@ import Search from 'features/search/Search'
 import UserDetail from 'features/users/UserDetail'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLink } from '@fortawesome/free-solid-svg-icons'
-
+import PasswordReset from 'layouts/landing/PasswordReset'
 export default props => {
     return (
         <Router>
@@ -27,6 +27,9 @@ export default props => {
             </Route> 
             <Route path="/login">
           <Login />
+            </Route>
+        <Route path="/password-reset">
+          <PasswordReset />
             </Route>
             <Route path="/">
                <Login />
