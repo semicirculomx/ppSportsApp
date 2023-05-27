@@ -151,11 +151,6 @@ function Pick({ pick, isPostPick }) {
                       </p>
                     </div>
                     <div className="mb-1 d-flex justify-content-between align-items-center">
-                    <span className="w-75">
-                    {pick?.pick_title}
-                    </span>
-                  </div>
-                    <div className="mb-1 d-flex justify-content-between align-items-center">
                       <span className="w-75">
                         {(bet.match.home_team && bet.match.home_team !== 'N/A') && (bet.match.away_team && bet.match.away_team !== 'N/A') ? `${bet.match.home_team} vs ${bet.match.away_team}` : bet.match.matchTitle} - {dateConverter(bet.match.commence_time)}
                       </span>
@@ -171,15 +166,15 @@ function Pick({ pick, isPostPick }) {
               ))}
           </div>
           <div className="d-flex w-100 justify-content-between align-items-center mb-2">
-              <div className="align-items-center">
-                <p className="mb-0 text-muted">Apuesta</p>
-                <span  style={{fontSize: '14px'}} className="font-weight-bold">${(pick?.stake * 250)}</span>
-                {/* <small>hace <ReactTimeAgo date={Date.parse(pick?.created_at)} timeStyle="twitter" /></small> */}
-              </div>
-              <div className="align-items-center">
-                <p className="mb-0 text-muted">Ganancias potenciales</p>
-                <span style={{fontSize: '14px'}} className="font-weight-bold">${pick.profit.toFixed(2)}</span>
-              </div>
+            <div className="align-items-center">
+              <p className="mb-0 text-muted">Apuesta</p>
+              <span style={{ fontSize: '14px' }} className="font-weight-bold">${(pick?.stake * 250)}</span>
+              {/* <small>hace <ReactTimeAgo date={Date.parse(pick?.created_at)} timeStyle="twitter" /></small> */}
+            </div>
+            <div className="align-items-center">
+              <p className="mb-0 text-muted">Ganancias potenciales</p>
+              <span style={{ fontSize: '14px' }} className="font-weight-bold">${pick.profit.toFixed(2)}</span>
+            </div>
           </div>
         </>
       }
@@ -224,11 +219,6 @@ function Pick({ pick, isPostPick }) {
                   <div className="mb-1 d-flex justify-content-between align-items-center">
                     <span className="w-75">
                       {(bet.match.home_team && bet.match.away_team) ? `${bet.match.home_team} vs ${bet.match.away_team}` : bet.match.matchTitle} - {dateConverter(bet.match.commence_time)}
-                    </span>
-                  </div> 
-                  <div className="mb-1 d-flex justify-content-between align-items-center">
-                    <span className="w-75">
-                    {pick?.pick_title}
                     </span>
                   </div>
                   <div className="d-flex w-100 justify-content-between align-items-center">
