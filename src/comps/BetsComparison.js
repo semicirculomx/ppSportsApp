@@ -10,8 +10,6 @@ const OddspediaWidget = () => {
         script.src = 'https://widgets.oddspedia.com/js/widget/init.js?widgetId=oddspediaWidgetLiveScorePopularSportsfootballtennisbasketballesportsbaseballmixedmartialartsboxingLeagues';
         script.async = true;
 
-		script.onload = () => setLoading(false);
-
         window.oddspediaWidgetLiveScorePopularSportsfootballtennisbasketballesportsbaseballmixedmartialartsboxingLeagues = {
 			api_token: "d0351255c5083f8f24be3cfb50f6818914276e36f8fe2e51b2fb49a2e72d",
 			type: "live-score",
@@ -43,13 +41,9 @@ const OddspediaWidget = () => {
 	return (
 		<>
 		  <Heading title="Resultados en vivo" logo />
-		  {loading ? (
-			<Spinner />
-		  ) : (
 			<div id="oddspedia-widget-live-score-popular-false-sports-football-tennis-basketball-esports-baseball-mixed-martial-arts-boxing-leagues-false">
 			  {/* The third-party widget will be loaded here */}
 			</div>
-		  )}
 		</>
 	  );
 };
