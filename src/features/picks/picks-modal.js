@@ -8,6 +8,7 @@ import ComposeModal from 'features/picks/Compose'
 
 
 import {ReactComponent as StarRounded} from '../../assets/icons/star-square-svgrepo-com.svg'
+import { faLongArrowAltUp, faPen, faPenAlt, faPencilAlt } from '@fortawesome/free-solid-svg-icons'
 
 
 export default props => {
@@ -50,20 +51,14 @@ export default props => {
                         <Media.Body className="mx-auto">
                         <div className="game-button button-get-plan">
                             <div onClick={() => setFormType('apuesta')}>
-                            <StarRounded className="svg-rocket" />
-                                <span>Crea una apuesta</span>
+                            <FontAwesomeIcon icon={faPencilAlt} className="svg-rocket" />
+                                <span>Empezar un pick nuevo</span>
                             </div>
                         </div>
                         <div className="game-button button-get-plan">
                             <div onClick={() => setFormType('analisis')}>
-                            <StarRounded className="svg-rocket" />
+                            <FontAwesomeIcon icon={faPencilAlt} className="svg-rocket" />
                                 <span>Escribe un análisis</span>
-                            </div>
-                        </div>
-                        <div className="game-button button-get-plan">
-                           <div onClick={() => setFormType('partido')}>
-                            <StarRounded className="svg-rocket" />
-                                <span>Crea un partido destacado</span>
                             </div>
                         </div>
                         </Media.Body>

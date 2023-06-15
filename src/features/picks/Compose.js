@@ -1,5 +1,4 @@
-import React from 'react'
-import { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Modal, Media, Alert, ProgressBar, Form, Row, Col, InputGroup, Button } from 'react-bootstrap'
 import { useLocation } from 'react-router-dom'
 import { Typeahead } from 'react-bootstrap-typeahead'
@@ -11,8 +10,7 @@ import { faImage } from '@fortawesome/free-regular-svg-icons/faImage'
 import { useSelector, useDispatch } from 'react-redux'
 import { composePostAndPick } from 'features/posts/postsSlice'
 import TextEditor from 'comps/TextEditor.js'
-import { useEffect } from 'react'
-
+import PinballSwitch from 'comps/switchComp'
 import { fetchLeagueMatches, getSportsData, selectApiSports, selectLeagueMatches } from 'features/picks/picksSlice'
 import Slip from 'comps/Slip'
 // import Autocomplete from 'comps/autocomplete'
@@ -58,12 +56,17 @@ export default props => {
     let [placeholder, setPlaceholder] = useState(true)
     let [bookmaker, setBookmaker] = useState(null)
     let [showModal, setShowModal] = useState(props.show)
-
+    let [analysisActivated, setAnalysisActivated] = useState(false)
     let [progress, setProgress] = useState(0)
 
     const [totalOdds, setTotalOdds] = useState(0);
     const [totalPayout, setTotalPayout] = useState(0);
 
+    function activateAnalysis(value) {
+        console.log(analysisActivated)
+        setAnalysisActivated(value)
+        console.log(value)
+    }
     function calculatePayout(bets, stake) {
         if (!bets.length)
             return { totalOdds: 0, payout: 0 };
@@ -86,7 +89,7 @@ export default props => {
         // Format the total odds and payout in American format
         let singleBetOdd = bets[0].odds;
         let totalOddsAmerican = totalOdds >= 0 ? `+${totalOdds.toFixed(0)}` : `-${Math.abs(totalOdds).toFixed(0)}`;
-        let payoutAmerican = `$${payout.toFixed(2)}`;
+        let payoutAmerican = payout.toFixed(2);
         let payoutNumber = payout.toFixed(2)
 
         // Return an object with the total odds and payout in American format
@@ -130,7 +133,7 @@ export default props => {
     }, [apiStatus, apiSports, dispatch])
 
     useEffect(() => {
-     setShowModal(props.show)
+        setShowModal(props.show)
     }, [props.show])
 
 
@@ -176,7 +179,7 @@ export default props => {
                 if (selectedMatch.bookmakers.length) {
                     setBookmaker(findLongestMarketsArray(selectedMatch.bookmakers))
                 }
-                setMatchTitle(selectedMatch.home_team + ' vs ' + selectedMatch.away_team)
+                //setMatchTitle(selectedMatch.home_team + ' vs ' + selectedMatch.away_team)
             }
             setActive(true)
         }
@@ -374,7 +377,7 @@ export default props => {
                                     <>
                                         <Form.Group controlId="eventName">
                                             <Form.Control
-                                                placeholder="Título del pick"
+                                                placeholder={type !== 'apuesta' ? 'Escríbe un título para tu publicación' : 'Escríbe un título para tu pick'}
                                                 type="text"
                                                 value={pick_title}
                                                 onChange={n => setPickTitle(n.target.value)}
@@ -409,19 +412,19 @@ export default props => {
                                             onChange={handleSelectMatch}
                                             labelKey={(option) => `${option.home_team} - ${option.away_team} | ${dateConverter(option.commence_time)}`}
                                             options={leagueMatches}
-                                            placeholder="Selecciona un partido..."
+                                            placeholder="Elige un partido..."
                                             selected={match ? [match] : []}
                                         />
                                     </Form.Group>
                                 )}
                                 {match && (
-                                     <Form.Group controlId="matchTitle">
-                                     <Form.Control
-                                         placeholder="Título de apuesta"
-                                         type="text"
-                                         value={matchTitle}
-                                         onChange={(e) => setMatchTitle(e.target.value)} />
-                                 </Form.Group>
+                                    <Form.Group controlId="matchTitle">
+                                        <Form.Control
+                                            placeholder="¿Cuál es tu apuesta?"
+                                            type="text"
+                                            value={matchTitle}
+                                            onChange={(e) => setMatchTitle(e.target.value)} />
+                                    </Form.Group>
                                 )}
                                 <hr />
                                 {type !== 'analisis' && (
@@ -432,7 +435,7 @@ export default props => {
                                                     <Typeahead
                                                         clearButton
                                                         allowNew={true}
-                                                        newSelectionPrefix="No está? Agrega uno..😁: "
+                                                        newSelectionPrefix="Agrega y elige un nuevo mercado"
                                                         id="market-typeahead"
                                                         onChange={mercado => !mercado[0]?.customOption ? setMarket(mercado[0]) : setMarket(mercado[0].label)}
                                                         options={betMarkets}
@@ -440,7 +443,7 @@ export default props => {
                                                         selected={market ? [market] : []}
                                                     />
                                                 </Form.Group>
-                                                <Row>
+                                                <Row className="">
                                                     <Col>
                                                         <Form.Group className="mr-2" controlId="marketOdds">
                                                             <Form.Control
@@ -462,29 +465,42 @@ export default props => {
                                                         </Form.Group>
                                                     </Col>
                                                 </Row>
+                                                <Row className="justify-content-between">
+                                                    <div className="col cuota">
+                                                        <p>Momio total</p>
+                                                        <InputGroup className="">
+                                                            <InputGroup.Text className="font-weight-bold">{totalOdds}</InputGroup.Text>
+                                                        </InputGroup>
+                                                    </div>
+                                                    <div className="col profit">
+                                                        <p>Ganancia</p>
+                                                        <InputGroup className="">
+                                                            <InputGroup.Prepend>
+                                                                <InputGroup.Text>$</InputGroup.Text>
+                                                            </InputGroup.Prepend>
+                                                            <InputGroup.Text className="font-weight-bold">{totalPayout}</InputGroup.Text>
+                                                        </InputGroup>
+                                                    </div>
+                                                </Row>
 
-                                                <InputGroup className="">
-                                                    <span>Momio total:</span>
-                                                    <InputGroup.Text className="font-weight-bold">{totalOdds}</InputGroup.Text>
-                                                </InputGroup>
-                                                <InputGroup className="">
-                                                    <span>Retorno:</span>
-                                                    <InputGroup.Text className="font-weight-bold">{totalPayout}</InputGroup.Text>
-                                                </InputGroup>
                                                 <div className="custom-btn">
                                                     <Button
-                                                        className="font-weight-bold btn w-100 mb-3"
+                                                        className="font-weight-bold btn w-100  mt-3"
                                                         onClick={addBetMatch}
                                                         disabled={!market || !odds || !stake || !matchTitle}
-                                                    >Agregar</Button>
+                                                    >Agregar apuesta</Button>
                                                 </div>
 
                                             </>
                                         )}
                                     </>)}
                                 <Slip bets={bets} onRemove={handleRemove} />
+                                <p className="text-muted mt-3 font-weight-bold" style={{fontSize:'10px'}}>
+                                    {!analysisActivated ? 'Abrir': 'Esconder'} campo de análisis
+                                </p>
+                                <PinballSwitch activateAnalysis={activateAnalysis} />
 
-                                {type !== 'partido' && (
+                                {(type !== 'partido' && analysisActivated) && (
                                     <>
                                         <Form.Group className="w-100 p-0" controlId="analisis">
                                             <TextEditor style={{

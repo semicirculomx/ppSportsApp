@@ -143,7 +143,7 @@ export default props => {
                     <Col xs="6" lg="4" className="mb-1">
                         <div className="d-flex text-muted">
                             <FontAwesomeIcon className="mt-1" icon={faWallet} style={{ fontSize: '1em' }} />
-                            <span className="ml-1">Bank: {currencyFormat(user.totalBank)}</span>
+                            <span className="ml-1">Bank mensual: {currencyFormat(user.totalBank)}</span>
                         </div>
                     </Col>
                 </Row>
@@ -151,7 +151,7 @@ export default props => {
                     <Col xs="6" lg="4" className="mb-1">
                         <div className="d-flex text-muted align-items-top">
                             <FontAwesomeIcon className="mt-1" icon={faTrophy} style={{ fontSize: '1em' }} />
-                            <span className="ml-1">Ganadas: ...</span>                     
+                            <span className="ml-1">Ganadas: {user.won_bets}</span>                     
                         </div>
                     </Col>
                 </Row>                
@@ -159,7 +159,7 @@ export default props => {
                     <Col xs="6" lg="4" className="mb-1">
                         <div className="d-flex text-muted align-items-top">
                             <FontAwesomeIcon className="mt-1" icon={faWindowClose} style={{ fontSize: '1em' }} />
-                            <span className="ml-1">Perdidas: ...</span>
+                            <span className="ml-1">Perdidas: {user.lost_bets}</span>
                         </div>
                     </Col>
                 </Row>
