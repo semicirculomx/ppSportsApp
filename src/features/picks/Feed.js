@@ -12,10 +12,10 @@ export default (props) => {
     let { feed_status: status } = useSelector(state => state.picks)
     let picks = useSelector(selectFeedPicks)
     let dispatch = useDispatch()
-    const getPicks = useCallback(() => {
-        dispatch(getPicksFeed())
-        // eslint-disable-next-line
-    }, [])
+    // const getPicks = useCallback(() => {
+    //     dispatch(getPicksFeed())
+    //     // eslint-disable-next-line
+    // }, [])
     // if (status === 'error')
     //     append = <TryAgain fn={getPicks} />
   

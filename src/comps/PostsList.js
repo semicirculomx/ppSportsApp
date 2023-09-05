@@ -68,7 +68,7 @@ const [secondLevelFilter, setSecondLevelFilter] = useState('recent');
       };
 
       let filteredPosts = posts.filter((post) => {
-        if (categoryFilter !== 'all' && !post.post_categories.includes(categoryFilter)) {
+        if (categoryFilter !== 'all' && !post.categories.includes(categoryFilter)) {
           return false;
         }
       
@@ -199,7 +199,7 @@ const [secondLevelFilter, setSecondLevelFilter] = useState('recent');
         }
         {!comments &&
         <ListGroup variant="flush" className="post-card">
-            {(filteredPosts.length) ? filteredPosts.map(post => {
+            {(posts.length) ? posts.map(post => {
                     // const isSelected = selectedItems.has(post.id_str);
                 let { retweeted_by } = post
                 return (
@@ -219,7 +219,7 @@ const [secondLevelFilter, setSecondLevelFilter] = useState('recent');
             )}
             {status === 'loading' && <Spinner />}
             {status === 'error' && <TryAgain fn={getPosts} />}
-            {(filteredPosts.length > 0) && (
+            {(posts.length > 0) && (
               <div className="custom-btn d-flex justify-content-center" >
               <button onClick={getPosts} className="btn mt-2 mb-4">
                 Cargar más

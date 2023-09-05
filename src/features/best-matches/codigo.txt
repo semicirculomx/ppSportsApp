@@ -60,7 +60,7 @@ export default props => {
     let [initialContent, setInitialContent] = useState('Escribe aquí tus análisis y predicciones...')
     let [placeholder, setPlaceholder] = useState(true)
     let [bookmaker, setBookmaker] = useState(null)
-    let [post_categories, setCategory] = useState([])
+    let [categories, setCategory] = useState([])
 
     let [progress, setProgress] = useState(0)
 
@@ -116,7 +116,7 @@ export default props => {
         }
     }
     const addCategory = (newCategory) => {
-        setCategory([...post_categories, newCategory]);
+        setCategory([...categories, newCategory]);
       };
     useEffect(() => {
         if (ta.current) {
@@ -264,7 +264,7 @@ export default props => {
                 post_title: pick_title,
                 base64Images,
                 htmlContent: htmlSanitized,
-                post_categories
+                categories
 
             };
         }

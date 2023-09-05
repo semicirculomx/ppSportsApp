@@ -9,7 +9,7 @@ import { picksAdded } from './picksSlice'
 export const populatePick = (pick, state) => {
    return {
    ...pick,
-    user: usersSelectors.selectById(state, pick.user.screen_name),
+    user: usersSelectors.selectById(state, pick.user) || pick.backup_user,
    }
 }
 
@@ -29,8 +29,10 @@ export const parsePicks = (picks, { dont_dispatch_picks = false, dont_update_use
                 screen_name: pick.user.screen_name,
                 role: pick.user.role,
                 won_bets: pick.user.won_bets,
-                lost_bets: pick.user.lost_bets,               
-            }
+                lost_bets: pick.user.lost_bets,
+                following: pick.user.following,               
+            },
+            backup_user: pick.user
         }))
 
         if (!dont_dispatch_picks)

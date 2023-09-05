@@ -27,9 +27,8 @@ import ChatRoom from 'comps/chat-room-placeholder'
 import { useAlerts } from 'features/alerts/alertsContext'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import TextEditor from 'comps/TextEditor'
 import OddspediaWidget from 'comps/BetsComparison'
-import Feed from 'features/picks/Feed'
+import SubscribersList from 'features/users/subscribers'
 
 export default props => {
     const { ensureCompleteProfile } = useAlerts()
@@ -52,7 +51,8 @@ export default props => {
 
                         <Route path="/live-scores" component={OddspediaWidget}/>
                         <Route path="/compose/post" component={Compose}/>
-
+                        
+                        <Route path='/user/subscribers' component={SubscribersList} />
                         <Route path='/post/:postId/likes' component={PostLikes} />
                         <Route path='/post/:postId/reposts' component={PostReposts} />
                         <Route path='/post/:postId' component={PostDetail} />
@@ -63,7 +63,6 @@ export default props => {
 
                         <Route path='/notifications' component={Notifies} />
                         <Route path='/settings' component={Settings} />
-                        <Route path='/chats' component={ChatRoom} />
 
                         <Route path='/' component={Home} />
                     </Switch>           

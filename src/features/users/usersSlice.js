@@ -33,6 +33,7 @@ const initialState = usersAdapter.getInitialState({
     user_timeline_page: 0,
     user_picks_page: 0,
     user_posts_page: 0,
+    cancelled_subscribed_status: 'idle',
 
     user_update_status: 'idle',
 
@@ -46,6 +47,10 @@ const initialState = usersAdapter.getInitialState({
     post_likes_page: 0,
     post_reposts_status: 'idle',
     post_reposts_page: 0,
+    user_subscriberlist_page: 0,
+    user_subscriberlist_status: 'idle',
+
+
 })
 
 export const updateUserDetails = createAsyncThunk(
@@ -76,7 +81,7 @@ export const getUserTimeline = createAsyncThunk(
         if (user) {
             dispatch(userAdded(user))
         }
-            }
+    }
 )
 
 export const getUserPicks = createAsyncThunk(
@@ -94,9 +99,9 @@ export const getUserPicks = createAsyncThunk(
         if (user && !picks.length) {
             dispatch(userAdded(user))
         }
-        if(picks) {
+        if (picks) {
             dispatch(parsePicks(picks))
-        }        
+        }
         return picks.length
     }
 )
@@ -116,7 +121,7 @@ export const getUserPosts = createAsyncThunk(
         if (user && !posts.length) {
             dispatch(userAdded(user))
         }
-        if(posts) dispatch(parsePosts(posts))
+        if (posts) dispatch(parsePosts(posts))
 
         return posts.length
     }
@@ -232,6 +237,50 @@ export const getReposts = createAsyncThunk(
     }
 )
 
+export const subscribeUser = createAsyncThunk(
+    'users/subscribeUser',
+    async (username, { dispatch, getState }) => {
+        dispatch(subscribingChanged({ username, isSubscribed: true })); // Assuming you have a subscribingChanged action
+        username = encodeURIComponent(username);
+        let result = await request(`/api/subscriptions/premium/subscribe`, { dispatch, body: {username: username} }); // Adjust the API endpoint accordingly
+    }
+);
+
+export const unsubscribeUser = createAsyncThunk(
+    'users/cancelSubscription',
+    async (username, { dispatch, getState }) => {
+        dispatch(subscribingChanged({ username, isSubscribed: false })); // Assuming you have a subscribingChanged action
+        username = encodeURIComponent(username);
+        let result = await request(`/api/subscriptions/premium/cancel`, { dispatch, body: {username: username} }); // Adjust the API endpoint accordingly
+    }
+);
+
+
+export const getSubscribers = createAsyncThunk(
+    'users/getSubscribers',
+    async (userid, { dispatch, getState }) => {
+        let {
+            users: { user_subscriberlist_page: p },
+        } = getState();
+        let l = selectSubscribers(getState(), userid).length;
+        if (!l) {
+            dispatch(resetSubscriberlistPage());
+            p = 0;
+        }
+        p = parseInt(p);
+        userid = encodeURIComponent(userid);
+        let { users = [] } = await request(`/api/subscriptions/premium/${userid}?p=${p + 1}`, { dispatch }); // Adjust the API endpoint as needed
+        users = users || [];
+        console.log(users)
+         if (!users.length) return;
+         users = users
+             .map(user => ({ ...user, subscriber_of: decodeURIComponent(userid) }))
+             .filter(Boolean);
+         dispatch(usersAdded(users));
+         return users.length;
+    }
+);
+
 const usersSlice = createSlice({
     name: 'users',
     initialState,
@@ -246,12 +295,22 @@ const usersSlice = createSlice({
                 },
             })
         },
+        subscribingChanged: (state, action) => {
+            let { username, isSubscribed } = action.payload;
+            usersAdapter.updateOne(state, {
+                id: username,
+                changes: {
+                    isSubscribed,
+                    new: true,
+                },
+            });
+        },
         resetTimelinePage: state => {
             state.user_timeline_page = 0
         },
         resetPicksPage: state => {
             state.user_picks_page = 0
-        }, 
+        },
         resetPostsPage: state => {
             state.user_posts_page = 0
         },
@@ -266,6 +325,9 @@ const usersSlice = createSlice({
         },
         resetRepostsPage: state => {
             state.post_reposts_page = 0
+        },
+        resetSubscriberlistPage: state => {
+            state.user_subscriberlist_status = 0
         },
         userAdded: usersAdapter.upsertOne,
         usersAdded: usersAdapter.upsertMany,
@@ -382,6 +444,20 @@ const usersSlice = createSlice({
                 state.post_reposts_page += 1
             } else state.post_reposts_status = 'done'
         },
+
+        [getSubscribers.rejected]: state => {
+            state.user_subscriberlist_status = 'error';
+        },
+        [getSubscribers.pending]: state => {
+            state.user_subscriberlist_status = 'loading';
+        },
+        [getSubscribers.fulfilled]: (state, action) => {
+            const length = action.payload
+            if (length > 0) {
+                state.user_subscriberlist_status = 'idle'
+                state.user_subscriberlist_page += 1
+            } else state.user_subscriberlist_status = 'done'
+        },
     },
 })
 const { actions, reducer } = usersSlice
@@ -398,6 +474,9 @@ export const {
     usersAddedDontUpdate,
     resetLikesPage,
     resetRepostsPage,
+    subscribingChanged,
+    resetSubscriberlistPage,
+
 } = actions
 
 export const usersSelectors = usersAdapter.getSelectors(state => state.users)
@@ -425,6 +504,13 @@ export const selectFollowers = createSelector(
             .filter(user => user.follower_of === username)
             .filter(user => user.follower_of !== user.screen_name)
 )
+export const selectSubscribers = createSelector(
+    [usersSelectors.selectAll, (_, userid) => userid],
+    (users, userid) =>
+        users
+            .filter(user => user.subscriber_of === userid)
+            .filter(user => user.subscriber_of !== user._id)
+)
 export const selectLikes = createSelector(
     [usersSelectors.selectAll, (_, postId) => postId],
     (users, postId) => users.filter(user => user.liked_post === postId)
@@ -433,5 +519,8 @@ export const selectReposts = createSelector(
     [usersSelectors.selectAll, (_, postId) => postId],
     (users, postId) => users.filter(user => user.reposted_post === postId)
 )
-
+export const selectIsSubscribed = (state, tipsterId) => {
+    const user = state.users.entities[tipsterId];
+    return user ? user.isSubscribed : false;
+};
 // export { selectUserPosts } from 'features/posts/postsSlice'

@@ -39,7 +39,6 @@ export const getFeed = createAsyncThunk('posts/getFeed', async (_, { dispatch, g
         //     posts: { feed_page: p },
         // } = getState()
         let feedLength = selectFeedPosts(getState()).length
-        console.log(feedLength)
         let p = Math.floor(feedLength / 10)
 
         let url = `/api/home_timeline?p=${p + 1}`
@@ -50,6 +49,7 @@ export const getFeed = createAsyncThunk('posts/getFeed', async (_, { dispatch, g
         // picks = picks.filter(Boolean).map(pick => ({ ...pick, is_feed_pick: true }))
         // console.log(posts, picks)
         dispatch(parsePosts(posts))
+        console.log(posts)
 
         // dispatch(picksAdded(picks));
         return posts.length

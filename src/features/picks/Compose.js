@@ -56,16 +56,15 @@ export default props => {
     let [placeholder, setPlaceholder] = useState(true)
     let [bookmaker, setBookmaker] = useState(null)
     let [showModal, setShowModal] = useState(props.show)
-    let [analysisActivated, setAnalysisActivated] = useState(false)
+    let [analysisActivated, setAnalysisActivated] = type === 'analisis' ? useState(true) : useState(false)
     let [progress, setProgress] = useState(0)
+    const [isPremium, setIsPremium] = useState(false);
 
     const [totalOdds, setTotalOdds] = useState(0);
     const [totalPayout, setTotalPayout] = useState(0);
 
     function activateAnalysis(value) {
-        console.log(analysisActivated)
         setAnalysisActivated(value)
-        console.log(value)
     }
     function calculatePayout(bets, stake) {
         if (!bets.length)
@@ -108,7 +107,9 @@ export default props => {
             props.onClose()
         }
     }
-
+    const handlePremiumCheckboxChange = () => {
+        setIsPremium(!isPremium);
+    };
     const resizeTa = () => {
         if (ta.current) {
             // let height = ta.current.scrollHeight;
@@ -135,7 +136,6 @@ export default props => {
     useEffect(() => {
         setShowModal(props.show)
     }, [props.show])
-
 
     /* Handle selected sport */
     const handleSelectSport = (selectedSport) => {
@@ -240,6 +240,8 @@ export default props => {
         if (!active) return;
         setActive(false);
 
+        handleClose()
+
         let body = {
             post: {},
             pick: {}
@@ -257,10 +259,11 @@ export default props => {
                 }
                 body.post = {
                     text,
+                    isPremium,
                     post_title: pick_title,
                     base64Images,
                     htmlContent: htmlSanitized,
-                    post_categories: []
+                    categories: []
                 };
             }
 
@@ -270,15 +273,18 @@ export default props => {
                     stake,
                     pick_title,
                     profit,
+                    isPremium,
                     lastUserBank: user.bank,
                     totalOdds,
+                    categories: bets.map((e) => e.match.sport),
+
                 };
                 body.pick = pick;
                 if (body.post.text) {
-                    body.post.post_categories = bets.map((e) => e.match.sport)
+                    body.post.categories = bets.map((e) => e.match.sport)
                 }
             } else {
-                body.post.post_categories = [sport.group ? sport.group : sport.label]
+                body.post.categories = [sport.group ? sport.group : sport.label]
                 body.post.bets = [{
                     match: {
                         home_team: match.home_team ? match.home_team : undefined,
@@ -293,12 +299,11 @@ export default props => {
                     }
                 }]
             }
-            console.log(body)
-            let action = await dispatch(composePostAndPick({ body }))
+        console.log(body)
+           let action = await dispatch(composePostAndPick({ body }))
 
             if (action.type === 'posts/composePostAndPick/fulfilled') {
                 setActive(true);
-                handleClose()
             }
         } catch (error) {
             console.log(error)
@@ -495,13 +500,27 @@ export default props => {
                                         )}
                                     </>)}
                                 <Slip bets={bets} onRemove={handleRemove} />
-                                <p className="text-muted mt-3 font-weight-bold" style={{fontSize:'10px'}}>
-                                    {!analysisActivated ? 'Abrir': 'Esconder'} campo de análisis
-                                </p>
+                                                                                                     {/* Checkbox de premium */}
+                                                                                                     <Form.Group controlId="premiumCheckbox">
+                                            <Form.Check
+                                                type="checkbox"
+                                                label="Marcar como premium"
+                                                checked={isPremium}
+                                                onChange={handlePremiumCheckboxChange}
+                                            />
+                                        </Form.Group>
+                                {type === 'apuesta' && (
+                                    <>
+                                                              <p className="text-muted mt-3 font-weight-bold" style={{fontSize:'10px'}}>
+                                                                {!analysisActivated ? 'Abrir': 'Esconder'} campo de análisis
+                                                            </p>                            
                                 <PinballSwitch activateAnalysis={activateAnalysis} />
-
+                                </>
+                                )} 
+                     
                                 {(type !== 'partido' && analysisActivated) && (
                                     <>
+
                                         <Form.Group className="w-100 p-0" controlId="analisis">
                                             <TextEditor style={{
                                                 height

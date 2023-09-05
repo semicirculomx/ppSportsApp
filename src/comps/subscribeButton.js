@@ -13,39 +13,39 @@ export default props => {
     // if (alerts)
     //     ensureNotifPermission = alerts.ensureNotifPermission
 
-    let { followUser, user, unFollowUser } = props
-    let { following } = user;
+    let { subscribe, user, unsubscribe } = props
+    let { isSubscribed } = user;
     let [hoverText, setHoverText] = React.useState('')
     let [hoverVariant, setHoverVariant] = React.useState('')
-    let handleFollow = async e => {
+    let handleSubscribe = async e => {
         e.preventDefault()
-        followUser(user.screen_name)
+        subscribe(user.screen_name)
+        console.log(user)
         //ensureNotifPermission()
     }
-    let handleUnFollow = async e => {
+    let handleUnsubscribe = async e => {
         e.preventDefault()
-        unFollowUser(user.screen_name)
-        setHoverText("Unfollowed")
+        unsubscribe(user.screen_name)
+        console.log(user)
+
     }
     let handleMouseEnter = useCallback(async _ => {
-        following && setHoverText("Unfollow")
-        following && setHoverVariant('danger')
-    }, [following])
+        isSubscribed && setHoverText("Cancel subscription")
+        isSubscribed && setHoverVariant('danger')
+    }, [isSubscribed])
     let handleMouseLeave = async _ => {
         setHoverText('')
         setHoverVariant('')
     }
-    let text = !following ? "Seguir" : "Siguiendo"
-    let variant = following ? "primary" : "outline-primary"
+    let text = !isSubscribed ? "Activar Premium" : "Desactivar Premium"
+    let variant = isSubscribed ? "primary" : "outline-primary"
     if (!isAuthenticated
         || (AuthUser && AuthUser.screen_name === user.screen_name))
         return <></>
     return (<>
         <Button
-            onClick={following ? handleUnFollow : handleFollow}
+            onClick={isSubscribed ? handleUnsubscribe : handleSubscribe}
             variant={hoverVariant || variant}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
             className="rounded-pill px-3 py-1 font-weight-bold">
             <span>{hoverText || text}</span>
         </Button>

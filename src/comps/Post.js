@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Media, Row, Col, Badge, Figure, Dropdown, Alert, ListGroup } from 'react-bootstrap';
+import React, { useEffect, useState } from 'react';
+import { Media, Row, Col, Badge, Figure, Dropdown, Alert, ListGroup, Button } from 'react-bootstrap';
 import PostText from './PostText';
 import ReactionsBar from 'features/posts/ReactionsBar'
 import UserLink from './user-link';
@@ -38,7 +38,14 @@ function Post({ post, no_reply_tag, comments }) {
       setError(error)
     }
   }
-
+//   useEffect(() => {
+//     console.log(authUser)
+//     console.log(post.user.isSubscribed)
+//     console.log(post.isPremium)
+// }, [])
+  const handleBuyPremium = () => {
+    // Implement your buy premium logic here
+  }
   const handleCancelDelete = () => {
     setShowPrompt(false)
   }
@@ -73,17 +80,33 @@ function Post({ post, no_reply_tag, comments }) {
               <h2 className="font-weight-bold card-title">{post?.post_title}</h2>
             </div>
             <div>
-              <Row className="align-items-center" justify-content="between">
-                <Col xs={9}>
-                  <Row className="mb-0 mt-2 card-subtitle">
-                    <span className="font-weight-bold pr-2">Análisis:</span>
-                    <blockquote className="mb-1 mw-100">
-                      <PostText to={`/post/${post?.id_str}`} post={post} />
-                    </blockquote>
-                  </Row>
-                </Col>
+            {(post.isPremium && !post.user.isSubscribed) && authUser?._id !== post?.user._id ? 
+               <Row className="align-items-center premium-prev" justify-content="between">
+               <Col xs={9}>
+                 <Row className="mb-0 mt-2 card-subtitle">
+                   <span>SÓLO PARA SUBSCRIPTORES PREMIUM</span>
+                 </Row>
+                 <Row className="mb-0 mt-2 card-subtitle">
+                <span className="font-weight-bold pr-2">Análisis:</span>
+                <blockquote className="mb-1 mw-100">
+                  <PostText post={post} />
+                </blockquote>
               </Row>
-              {post.pick &&
+               </Col>
+             </Row>
+            : 
+            <Row className="align-items-center" justify-content="between">
+            <Col xs={9}>
+              <Row className="mb-0 mt-2 card-subtitle">
+                <span className="font-weight-bold pr-2">Análisis:</span>
+                <blockquote className="mb-1 mw-100">
+                  <PostText to={`/post/${post?.id_str}`} post={post} />
+                </blockquote>
+              </Row>
+            </Col>
+           </Row>
+               }
+              {/* {post.pick &&
                 <ListGroup className="pick-card mt-2 mb-3" variant="flush">
                   <ListGroup.Item
                     key={post.pick.id_str}
@@ -93,7 +116,7 @@ function Post({ post, no_reply_tag, comments }) {
                     <Pick pick={post.pick} isPostPick={true} />
                   </ListGroup.Item>
                 </ListGroup>
-              }
+              } */}
             </div>
             <hr />
             <Row className="align-items-center" justify-content="between">

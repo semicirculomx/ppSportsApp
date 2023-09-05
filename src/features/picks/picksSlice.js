@@ -108,13 +108,18 @@ export const getSportsData = createAsyncThunk(
 
 export const getPicksFeed = createAsyncThunk('picks/getPicksFeed', async (_, { dispatch, getState }) => {
     try {
-        let {
-            picks: { feed_page: p },
-        } = getState()
-        let url = `/api/picks?p=${p + 1}`
+        // let {
+        //     picks: { feed_page: p },
+        // } = getState()
+        let feedLength = selectFeedPicks(getState()).length
+        let p = Math.floor(feedLength / 10)
+
+        let url = `/api/picks_timeline?p=${p + 1}`
         let data = await request(url, { dispatch })
-        let picks = data || []
-        dispatch(parsePicks(data))
+        let picks = data.picks || []
+        picks = picks.filter(Boolean).map(pick => ({ ...pick, is_feed_pick: true }))
+        dispatch(picksAdded(picks));
+        console.log(picks)
         return picks.length
     } catch (err) {
         console.log(err)
@@ -305,7 +310,6 @@ export default reducer
 let feedFilter = pick => {
     return (
         (pick.user.following === true ||
-        // || (post.user.new) // Can be customizable in settings someday
         pick.is_feed_pick)
     )
 }
@@ -316,7 +320,7 @@ export const picksSelectors = picksAdapter.getSelectors(state => state.picks)
 export const selectAllPicks = state => {
     return picksSelectors
         .selectAll(state)
-        .map(pick => populatePick(pick, state))
+        .map(pick => pick)
         .filter(Boolean)
 }
 
